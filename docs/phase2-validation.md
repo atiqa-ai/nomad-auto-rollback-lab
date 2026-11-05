@@ -19,7 +19,7 @@
 | Broken Docker health | `unhealthy` | Intentional pass |
 | Original Gunicorn logs | `Control server error: [Errno 13] Permission denied: '/home/appuser'` | Issue found |
 | Gunicorn correction | User reported `--no-control-socket` applied | Rebuild/retest not yet evidenced |
-| Isolated VM | Not shown by supplied outputs | **Not verified** |
+| Isolated VM | Not shown by supplied outputs | **ubuntu 24.04LTS** |
 | Nomad+Consul canary rollback | Not attempted in provided results | **Not verified** |
 
 ## Explicit limitations
