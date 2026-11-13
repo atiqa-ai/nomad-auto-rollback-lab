@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [[ $# -ne 2 ]]; then
+if [[ $# -lt 2 || $# -gt 3 ]]; then
   echo "Usage: nomad-lab-deploy COMMIT_SHA IMAGE_DIGEST" >&2
   exit 64
 fi
 
 commit="$1"
 digest="$2"
+mode="${3:-healthy}"
+[[ "$mode" == healthy || "$mode" == unhealthy ]] || exit 64
 [[ "$commit" =~ ^[a-f0-9]{40}$ ]] || { echo "Invalid 40-character commit SHA" >&2; exit 64; }
 [[ "$digest" =~ ^sha256:[a-f0-9]{64}$ ]] || { echo "Invalid SHA256 image digest" >&2; exit 64; }
 
@@ -34,13 +36,13 @@ job="$repo/nomad/rollback-demo.nomad.hcl"
 [[ -f "$job" ]] || { echo "Missing Nomad job in fetched commit: $job" >&2; exit 1; }
 
 echo "Deploy commit=$commit version=$version image=$image"
-nomad job validate -var="image=$image" -var="app_version=$version" -var="health_mode=healthy" "$job"
+nomad job validate -var="image=$image" -var="app_version=$version" -var="health_mode=$mode" "$job"
 
 plan_file=$(mktemp)
 trap 'rm -f "$plan_file"' EXIT
 set +e
 nomad job plan -no-color \
-  -var="image=$image" -var="app_version=$version" -var="health_mode=healthy" "$job" > "$plan_file" 2>&1
+  -var="image=$image" -var="app_version=$version" -var="health_mode=$mode" "$job" > "$plan_file" 2>&1
 plan_rc=$?
 set -e
 cat "$plan_file"
@@ -53,7 +55,7 @@ check_index=$(sed -n 's/^Job Modify Index: \([0-9][0-9]*\)$/\1/p' "$plan_file" |
 [[ "$check_index" =~ ^[0-9]+$ ]] || { echo "Missing Nomad Job Modify Index" >&2; exit 1; }
 
 nomad job run -check-index "$check_index" \
-  -var="image=$image" -var="app_version=$version" -var="health_mode=healthy" "$job"
+  -var="image=$image" -var="app_version=$version" -var="health_mode=$mode" "$job"
 
 for attempt in $(seq 1 30); do
   if health_json=$(curl -fsS --max-time 6 \
