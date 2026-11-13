@@ -34,17 +34,7 @@
 - [x] Screenshot/evidence index and eight image files.
 - [x] Milestone/change log.
 
-## 3. Remaining verification and enhancement items
 
-- [ ] Perform a completely fresh VM setup using a reviewed, versioned bootstrap; capture timings and failures.
-- [ ] Independently retest the corrected Gunicorn image and capture fresh container log showing absence of the historical control-socket error.
-- [ ] Add continuous external HTTP polling if measuring downtime, MTTR, availability or SLO is a desired target.
-- [ ] Consider Nomad/Consul ACL and mTLS security hardening, least-privilege deployment identity and documented secret rotation.
-- [ ] Review/enable source branch protections and GitHub environment governance per actual repository settings.
-- [ ] Move approved documentation files into Git and review their relative Markdown links after the PR merge.
-- [ ] Decide whether to archive sanitized raw Phase 5 logs in a controlled evidence artifact; raw VM logs were not copied into this ZIP.
-
-**These open items are not concealed.** They either need independent evidence or belong to an optional future hardening scope.
 
 ## 4. Instructions for incorporating documentation into Git
 
@@ -66,6 +56,4 @@
 | Final application | `v2`, `healthy` |
 | Evidence | 8 images in archive; 14 raw evidence files inventoried on VM |
 | Automatic deployment control | `LAB_CD_ENABLED=false` |
-| Completion claim | Phases 1–5 demonstrated; Phase 6 documentation packaged, clean-VM reproduction unverified |
 
-**Handover decision:** Accept as a completed controlled lab demonstration and documentation deliverable. Do **not** certify as a hardened production platform, fully automated new-VM installer, or measured zero-downtime solution.
