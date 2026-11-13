@@ -13,8 +13,4 @@ These are the eight original screenshots supplied from the user's VM and GitHub 
 | 07 | [CI-Triggered Automatic Rollback Log](07-CI-Triggered-Automatic-Rollback-Log.png) | Progress deadline failure caused automatic revert to stable configuration; the recovery succeeded while CI retained exit code 1. |
 | 08 | [Final Nomad Service Health](08-Final-Nomad-Service-Health.png) | Nomad UI confirmed successful version 8 and one healthy allocation after recovery; independent HTTP `v2` evidence is in verification logs. |
 
-## Presentation recommendations
 
-Screenshots 04 and 08 show overlapping dashboard information; if page count is limited, use 04 and the `phase4-verify.sh` terminal output instead of both. Screenshot 07 contains long wrapped log lines, so use the raw `ci-failure-job.log` for exact quotation or technical dispute. Screenshot 05 shows the successful portion of the manual recovery but not the `nomad job revert` command itself.
-
-When placing a figure in an academic report, give it a descriptive label, include its date/context, crop only empty margins, and avoid claiming the image proves details it does not actually show. Secret-bearing files or credential screens must never appear in the submitted appendix.
