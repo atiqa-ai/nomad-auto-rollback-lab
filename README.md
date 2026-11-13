@@ -9,7 +9,7 @@ A reproducible DevOps project demonstrating how to build, test, deploy, monitor 
 
 **Environment:** Isolated Ubuntu Linux lab
 
-**Repository:** https://github.com/atiqa-ai/nomad-auto-rollback-lab
+**Repository:** https://github.com/atiqa-ai/pipeline-with-canary-and-automated-rollback-on-Nomad
 
 ---
 
