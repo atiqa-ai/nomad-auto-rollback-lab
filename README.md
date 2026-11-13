@@ -15,17 +15,16 @@ A reproducible DevOps project demonstrating how to build, test, deploy, monitor 
 
 ## 1. Project Introduction
 
-The Nomad Automatic Rollback Lab is a DevOps automation project designed to demonstrate reliable application deployment and recovery.
+- The Nomad Automatic Rollback Lab is a DevOps automation project designed to demonstrate reliable application deployment and recovery.
 
-The project integrates GitHub Actions, Docker, GitHub Container Registry (GHCR), HashiCorp Nomad, Consul, Tailscale and SSH into a controlled application delivery workflow.
+- The project integrates GitHub Actions, Docker, GitHub Container Registry (GHCR), HashiCorp Nomad, Consul, Tailscale and SSH into a controlled application delivery workflow.
 
-Its primary objective is to identify unhealthy application releases, prevent failed candidates from being promoted and automatically restore the previously stable deployment configuration.
+- Its primary objective is to identify unhealthy application releases, prevent failed candidates from being promoted and automatically restore the previously stable deployment configuration.
 
-A lightweight Python Flask application serves as the demonstration service. It provides health and version endpoints that enable Nomad and Consul to assess deployment readiness.
+- A lightweight Python Flask application serves as the demonstration service. It provides health and version endpoints that enable Nomad and Consul to assess deployment readiness.
 
-The system supports automated CI/CD, progressive canary deployment, continuous health verification, automatic rollback and manual recovery.
+= The system supports automated CI/CD, progressive canary deployment, continuous health verification, automatic rollback and manual recovery.
 
-The entire implementation is intended for isolated development and testing environments rather than production infrastructure.
 
 ## 2. Project Overview
 
@@ -50,18 +49,6 @@ The system implements a controlled deployment workflow that:
 7. Reverts an unhealthy candidate to the previous stable job configuration.
 8. Reports deployment failure in GitHub Actions even when recovery succeeds.
 
-### Project Objectives
-
-- Automate application testing and container image publishing.
-- Implement controlled canary deployment using Nomad.
-- Integrate Consul-based application health monitoring.
-- Automatically revert unhealthy application releases.
-- Demonstrate manual rollback and incident recovery.
-- Preserve accurate CI/CD failure reporting.
-- Provide reproducible Ubuntu installation instructions.
-- Maintain operational documentation and deployment evidence.
-
----
 
 ## 3. Technology Stack
 
@@ -134,7 +121,7 @@ Use a dedicated Ubuntu machine or virtual machine.
 ### Supported Operating Systems
 
 - Ubuntu 24.04 LTS
-- Ubuntu 26.04 LTS
+- Ubuntu 26.04 LTS (alternate vesion)
 
 ### Prerequisites
 
@@ -629,7 +616,6 @@ The address above is historical lab evidence, not a fixed endpoint that new user
 | Successful push-triggered deployment | Verified |
 | Documentation and reports | Integrated |
 | Independent fresh-VM bootstrap evidence | Original bootstrap log not independently reviewed |
-| Mentor acceptance | Pending |
 
 The implementation and functional behavior were demonstrated in the isolated lab. The original clean-VM bootstrap log and formal mentor acceptance remain separate evidence requirements.
 
@@ -828,10 +814,4 @@ The project provides a reproducible reference for DevOps engineers and students 
 
 **Documentation and Evidence:** Integrated into the project repository.
 
-**Formal Acceptance:** Subject to mentor or authorized engineer review.
 
-The project is intended for an isolated DevOps laboratory. It does not represent a production deployment.
-
-### Repository
-
-https://github.com/atiqa-ai/nomad-auto-rollback-lab
