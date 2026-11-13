@@ -100,35 +100,41 @@ The deliverable ZIP contains the **documentation, Markdown report and evidence i
 ##  screenshot evidence
 
 The following eight visual records supplement the test-result tables and log summary.
-![Infrastructure services and Nomad client](../01-Infrastructure-Services-and-Nomad-Client.png)
+![Infrastructure services and Nomad client]
+(<img width="1280" height="800" alt="01-Infrastructure-Services-and-Nomad-Client" src="https://github.com/user-attachments/assets/07d7ade3-4a8c-4030-9e4e-06fcbd66aed6" />
 
 *Figure 01 — Docker, Nomad and Consul service readiness, plus Nomad client state.*
 
-![Flask application unit tests](../02-Flask-Application-Unit-Tests.png)
+![Flask application unit tests](<img width="1280" height="800" alt="02-Flask-Application-Unit-Tests" src="https://github.com/user-attachments/assets/5c24f789-bb5a-43aa-891b-6c03f9f01199" />)
 
 *Figure 02 — Nine passing Python application unit tests in the Ubuntu VM.*
 
-![Successful GitHub Actions CI/CD](../03-Successful-GitHub-Actions-CI-CD.png)
+![Successful GitHub Actions CI/CD](<img width="1280" height="800" alt="03-Successful-GitHub-Actions-CI-CD" src="https://github.com/user-attachments/assets/96ccd2db-2b0a-4683-ad0a-bd9fb16b0d51" />
+)
 
 *Figure 03 — Verified healthy release with passing tests, image publish and VM deployment.*
 
-![Nomad job overview](../04-Nomad-Job-Deployment-Overview.png)
+![Nomad job overview](<img width="1280" height="800" alt="04-Nomad-Job-Deployment-Overview" src="https://github.com/user-attachments/assets/f6e237db-df47-4c9d-b4ab-99e518430c91" />)
 
 *Figure 04 — Post-recovery Nomad job overview: stable version 8 and healthy allocation.*
 
-![Manual rollback recovery output](../05-Manual-Rollback-Recovery-Output.png)
+![Manual rollback recovery output](<img width="1280" height="800" alt="05-Manual-Rollback-Recovery-Output" src="https://github.com/user-attachments/assets/6994aa3e-a721-4154-a0f6-abe62918a71a" />
+)
 
 *Figure 05 — Manual recovery event reaches a successful job version; original command in the saved log.*
 
-![Expected GitHub Actions deployment failure](../06-Expected-GitHub-Actions-Deployment-Failure.png)
+![Expected GitHub Actions deployment failure](<img width="1280" height="800" alt="06-Expected-GitHub-Actions-Deployment-Failure" src="https://github.com/user-attachments/assets/d46b18cc-5fa5-428a-ba5d-71585002b74f" />
+)
 
 *Figure 06 — Controlled unhealthy candidate: test/build jobs passed and deployment failed.*
 
-![CI-triggered automatic rollback log](../07-CI-Triggered-Automatic-Rollback-Log.png)
+![CI-triggered automatic rollback log](<img width="1280" height="800" alt="07-CI-Triggered-Automatic-Rollback-Log" src="https://github.com/user-attachments/assets/04600511-3a61-4374-b771-3dfacaf1e86f" />
+)
 
 *Figure 07 — Deadline failure, revert to stable configuration and CI exit code 1.*
 
-![Final Nomad service dashboard](../08-Final-Nomad-Service-Health.png)
+![Final Nomad service dashboard](<img width="1280" height="800" alt="08-Final-Nomad-Service-Health" src="https://github.com/user-attachments/assets/7c180511-6483-4b60-a2c9-f7717c1e78c8" />)
+
 
 *Figure 08 — Final successful Nomad deployment dashboard; independent HTTP v2 health is recorded separately.*
 
