@@ -1,140 +1,167 @@
+
 # Nomad Automatic Rollback Lab
 
-**A reproducible DevOps lab for containerized application delivery, health-gated canary deployments, and automatic recovery with HashiCorp Nomad.**
+### Automated CI/CD, Health-Gated Canary Deployment and Self-Recovery with HashiCorp Nomad
 
-## 1. Project Introduction
+A reproducible DevOps project demonstrating how to build, test, deploy, monitor and automatically recover containerized applications using GitHub Actions, Docker, HashiCorp Nomad and Consul.
 
-The Nomad Automatic Rollback Lab demonstrates how a delivery pipeline can detect an unhealthy application release and recover without promoting the failed candidate. It combines **GitHub Actions**, **Docker**, **GitHub Container Registry (GHCR)**, **HashiCorp Nomad**, and **Consul**. For the remote CI/CD demonstration, **Tailscale** and **SSH with a pinned host key** provide access to an isolated Ubuntu lab VM.
+**Project Status:** Core implementation and functional validation completed.
 
-The project uses a Flask application with `/health` and `/version` endpoints. Healthy changes pass service checks and are promoted, while intentionally unhealthy candidates fail deployment health checks and trigger Nomad's configured automatic reversion. The CI/CD workflow still reports the failed candidate deployment as a failure, even when the previous healthy release is restored successfully.
+**Environment:** Isolated Ubuntu Linux lab
 
-**Project Scope:** A personal, isolated development and validation environment. The project does not deploy to production or authorize changes to company infrastructure.
-
-## 2. Project Overview
-
-The project addresses a common challenge in application deployment: a newly released version may fail health checks or become unstable after deployment.
-
-Without an automated recovery mechanism, engineers may need to identify the failure and manually restore a previous working version.
-
-This lab demonstrates a controlled delivery process in which:
-
-1. Application changes are tested automatically through GitHub Actions.
-2. Docker images are built and published to GHCR.
-3. Authorized releases are submitted to a Nomad environment.
-4. Nomad deploys a canary instance before promoting the candidate.
-5. Consul monitors application health through HTTP checks.
-6. Healthy candidates are automatically promoted.
-7. Unhealthy candidates trigger automatic reversion to the previous stable job configuration.
-8. GitHub Actions reports the deployment failure even when recovery succeeds.
-
-The result is a reproducible example of health-based deployment governance, automated rollback and operational recovery.
-
-## 3. Project Objectives
-
-- Develop a containerized Flask application with health and version endpoints.
-- Automate application testing using GitHub Actions.
-- Build and publish versioned Docker images to GitHub Container Registry.
-- Deploy immutable container images through HashiCorp Nomad.
-- Configure canary deployments with automatic promotion.
-- Integrate Consul health checks into deployment decisions.
-- Automatically revert failed releases without manual intervention.
-- Validate manual rollback and recovery procedures.
-- Ensure deployment failures are correctly reported by the CI/CD pipeline.
-- Provide a one-command setup script for local lab installation.
-- Maintain reproducible documentation, reports and validation evidence.
-
-## 4. Technology Stack
-
-| Technology | Purpose |
-|---|---|
-| Python | Application development and automated testing |
-| Flask | Sample web application and health endpoints |
-| Gunicorn | Python application server |
-| Docker | Application containerization |
-| GitHub Actions | Automated testing, image publishing and deployment |
-| GitHub Container Registry | Docker image storage |
-| HashiCorp Nomad | Container orchestration and deployment management |
-| HashiCorp Consul | Service registration and health checks |
-| Tailscale | Secure network connectivity for the remote CI/CD demonstration |
-| SSH | Controlled remote deployment access |
-| Ubuntu Linux | Local application and orchestration environment |
-| Git and GitHub | Version control and project collaboration |
-
-## 5. Deployment Architecture
-
-```mermaid
-flowchart TD
-    A["GitHub Source / Reviewed Main Branch"] --> B["GitHub Actions: Python Tests"]
-    B --> C["Docker Buildx + GHCR Image Digest"]
-    C --> D{"LAB_CD_ENABLED == true?"}
-    D -->|No| E["Skip Remote VM Deployment"]
-    D -->|Yes| F["Tailscale-Connected CI Runner"]
-    F --> G["Pinned-Host-Key SSH to Ubuntu Lab VM"]
-    G --> H["Validate Commit and Image Digest"]
-    H --> I["Nomad Validate, Plan and Job Submission"]
-    I --> J["Nomad Canary Allocation"]
-    J --> K{"Consul HTTP /health Checks"}
-    K -->|Healthy| L["Automatically Promote Candidate"]
-    K -->|Progress Deadline Exceeded| M["Automatically Revert to Stable Job"]
-    M --> N["CI Reports Deployment Failure"]
-```
-
-### Architecture Explanation
-
-The delivery workflow begins when reviewed changes are merged into the repository's `main` branch.
-
-GitHub Actions executes automated tests, creates a Docker image and publishes it to GHCR. When remote deployment is explicitly enabled, the workflow connects to the isolated Ubuntu lab through Tailscale and SSH.
-
-Nomad validates the deployment specification and starts a canary allocation. Consul performs HTTP health checks to evaluate the candidate.
-
-If the candidate remains healthy, Nomad promotes the deployment. If it fails to meet deployment health requirements within the configured deadline, Nomad automatically reverts to the previous stable configuration.
-
-The CI/CD workflow retains the failed deployment result, ensuring that application recovery does not incorrectly mark an unsuccessful release as successful.
-
-**Note:** This architecture describes the complete remote CI/CD workflow. The local installation procedure below sets up Docker, Nomad, Consul and the sample application. GitHub Actions credentials and Tailscale access require separate configuration.
+**Repository:** https://github.com/atiqa-ai/nomad-auto-rollback-lab
 
 ---
 
-## 6. Getting Started — Installation and Setup
+## 1. Project Introduction
 
-This section provides step-by-step instructions for cloning the repository and setting up the Nomad Automatic Rollback Lab on Ubuntu.
+The Nomad Automatic Rollback Lab is a DevOps automation project designed to demonstrate reliable application deployment and recovery.
 
-### Step 1 — System Requirements
+The project integrates GitHub Actions, Docker, GitHub Container Registry (GHCR), HashiCorp Nomad, Consul, Tailscale and SSH into a controlled application delivery workflow.
+
+Its primary objective is to identify unhealthy application releases, prevent failed candidates from being promoted and automatically restore the previously stable deployment configuration.
+
+A lightweight Python Flask application serves as the demonstration service. It provides health and version endpoints that enable Nomad and Consul to assess deployment readiness.
+
+The system supports automated CI/CD, progressive canary deployment, continuous health verification, automatic rollback and manual recovery.
+
+The entire implementation is intended for isolated development and testing environments rather than production infrastructure.
+
+## 2. Project Overview
+
+### Problem Statement
+
+Application deployments can introduce failures caused by configuration changes, application defects or unhealthy service instances.
+
+Without effective deployment controls, an unsuccessful release may require engineers to investigate the failure and manually restore a stable version.
+
+This project addresses that challenge through health-gated application deployment and automated rollback.
+
+### Proposed Solution
+
+The system implements a controlled deployment workflow that:
+
+1. Detects changes merged into the GitHub repository.
+2. Executes automated application tests.
+3. Builds and publishes a Docker image to GHCR.
+4. Deploys an authorized application release to HashiCorp Nomad.
+5. Evaluates a canary allocation using Consul health checks.
+6. Automatically promotes a healthy candidate.
+7. Reverts an unhealthy candidate to the previous stable job configuration.
+8. Reports deployment failure in GitHub Actions even when recovery succeeds.
+
+### Project Objectives
+
+- Automate application testing and container image publishing.
+- Implement controlled canary deployment using Nomad.
+- Integrate Consul-based application health monitoring.
+- Automatically revert unhealthy application releases.
+- Demonstrate manual rollback and incident recovery.
+- Preserve accurate CI/CD failure reporting.
+- Provide reproducible Ubuntu installation instructions.
+- Maintain operational documentation and deployment evidence.
+
+---
+
+## 3. Technology Stack
+
+| Technology | Purpose |
+|---|---|
+| Python | Application development and automated tests |
+| Flask | Sample application with health and version endpoints |
+| Gunicorn | Python application server |
+| Docker | Application containerization |
+| GitHub Actions | Automated CI/CD workflows |
+| GitHub Container Registry | Container image publishing |
+| HashiCorp Nomad | Scheduling, canary deployment and rollback |
+| HashiCorp Consul | Service registration and health checks |
+| Tailscale | Private connectivity for remote CI/CD |
+| SSH | Controlled deployment access to the Ubuntu VM |
+| Ubuntu Linux | Local orchestration environment |
+| Git and GitHub | Source control and collaboration |
+
+---
+
+## 4. System Architecture
+
+The project follows a Git-based CI/CD pipeline integrated with a Nomad-managed application environment.
+
+```mermaid
+flowchart TD
+    A["GitHub Repository / Main Branch"] --> B["GitHub Actions: Python Tests"]
+    B --> C["Docker Buildx and GHCR Image Digest"]
+    C --> D{"LAB_CD_ENABLED?"}
+    D -->|False| E["Skip Remote Deployment"]
+    D -->|True| F["Tailscale-Connected CI Runner"]
+    F --> G["SSH to Isolated Ubuntu VM"]
+    G --> H["Validate Commit and Image Digest"]
+    H --> I["Nomad Job Validation and Deployment"]
+    I --> J["Canary Allocation"]
+    J --> K{"Consul HTTP Health Check"}
+    K -->|Healthy| L["Automatically Promote Candidate"]
+    K -->|Unhealthy / Deadline Exceeded| M["Automatically Revert to Stable Job"]
+    M --> N["CI Reports Deployment Failure"]
+```
+
+### Architecture Workflow
+
+The application source code is maintained in GitHub.
+
+When a change is merged into `main`, GitHub Actions executes the Python unit tests and builds a Docker image.
+
+The image is published to GHCR using a commit-specific reference and immutable image digest.
+
+If remote deployment is explicitly enabled, the workflow connects to the isolated Ubuntu VM over Tailscale and pinned-host-key SSH.
+
+Nomad validates the deployment configuration and starts a canary allocation.
+
+Consul performs HTTP health checks to determine whether the candidate is ready for promotion.
+
+Healthy candidates are promoted automatically. Candidates that fail to satisfy the deployment health requirements trigger automatic reversion.
+
+The deployment pipeline retains the failure result even when recovery completes successfully.
+
+---
+
+# 5. Installation and Setup Guide
+
+This section explains how to clone the repository and configure the Nomad Automatic Rollback Lab on Ubuntu.
+
+## Step 1 — System Requirements
 
 Use a dedicated Ubuntu machine or virtual machine.
 
-**Supported Operating Systems:**
+### Supported Operating Systems
 
 - Ubuntu 24.04 LTS
 - Ubuntu 26.04 LTS
 
-**Requirements:**
+### Prerequisites
 
 - A user account with sudo privileges
-- Internet access for initial installation
-- Sufficient CPU, RAM and storage for Docker, Nomad, Consul and the sample application
+- Internet access for initial package installation
+- Sufficient CPU, RAM and storage for Docker and Nomad
 - A clean lab environment without conflicting Nomad or Consul installations
+- Git for downloading the project
 
-The setup script installs system packages and configures systemd services. It should only be executed on an isolated development or testing machine.
+**Important:** The automated installer is intended for isolated development and testing environments.
 
-### Step 2 — Update Ubuntu Packages
+## Step 2 — Update Ubuntu Packages
 
-Open the Ubuntu terminal and execute:
+Open a terminal and execute:
 
 ```bash
 sudo apt-get update
 sudo apt-get install -y git ca-certificates
 ```
 
-Verify the Git installation:
+Verify Git:
 
 ```bash
 git --version
 ```
 
-Git should display its installed version.
-
-### Step 3 — Clone the GitHub Repository
+## Step 3 — Clone the GitHub Repository
 
 Clone the project:
 
@@ -142,116 +169,111 @@ Clone the project:
 git clone https://github.com/atiqa-ai/nomad-auto-rollback-lab.git
 ```
 
-Navigate into the project directory:
+Navigate to the repository:
 
 ```bash
 cd nomad-auto-rollback-lab
 ```
 
-Verify that the setup script exists:
+Verify the installation script:
 
 ```bash
 ls -l scripts/setup-lab.sh
 ```
 
-The repository contains the application source code, Docker configuration, Nomad job specification, automation scripts, documentation and validation evidence.
+The cloned repository contains the application, Docker configuration, Nomad job specification, installation scripts, testing utilities and documentation.
 
-### Step 4 — Run the Automated Setup
+## Step 4 — Run the Automated Installation
 
-Execute the one-command installation script:
+Execute the one-command setup script:
 
 ```bash
 ./scripts/setup-lab.sh
 ```
 
-The script is designed to perform the following operations:
+The script is designed to:
 
-1. Verify the supported Ubuntu environment.
-2. Install required system packages.
-3. Install Docker if it is not already available.
+1. Detect the Ubuntu operating system.
+2. Install required system dependencies.
+3. Install Docker if necessary.
 4. Install HashiCorp Nomad and Consul.
-5. Configure dedicated Nomad and Consul systemd services.
-6. Initialize the Python virtual environment.
+5. Configure local Nomad and Consul systemd services.
+6. Create the Python virtual environment.
 7. Install application dependencies.
-8. Execute the Python unit tests.
-9. Build the sample Flask application Docker image.
+8. Execute Python unit tests.
+9. Build the application Docker image.
 10. Validate the Nomad job specification.
 11. Submit the healthy sample application to Nomad.
 
-The script may request your sudo password during package installation or service configuration.
+The setup may request your sudo password.
 
-To save an installation log on a fresh machine, use:
+To capture installation evidence on a fresh machine:
 
 ```bash
 set -o pipefail
 ./scripts/setup-lab.sh 2>&1 | tee "$HOME/nomad-fresh-bootstrap.log"
 ```
 
-**Important:** Completing the installation command does not automatically guarantee that the application is healthy. Follow the verification steps below.
+**Note:** A successful setup command must be followed by service and application health verification.
 
-### Step 5 — Verify Docker Installation
+## Step 5 — Verify Docker, Nomad and Consul
 
-Check the installed Docker version:
+Check Docker:
 
 ```bash
 docker --version
-```
-
-Verify the Docker service:
-
-```bash
 systemctl is-active docker
 ```
 
-Expected service status:
-
-```text
-active
-```
-
-### Step 6 — Verify Nomad and Consul
-
-Check the Nomad version:
+Check Nomad:
 
 ```bash
 nomad version
+systemctl is-active nomad-rollback-lab
 ```
 
-Check the Consul version:
+Check Consul:
 
 ```bash
 consul version
-```
-
-Verify both services:
-
-```bash
-systemctl is-active nomad-rollback-lab
 systemctl is-active consul-rollback-lab
 ```
 
-Both services should report `active` after successful installation.
+The systemd services should report `active`.
 
-### Step 7 — Verify the Nomad Client
-
-Run:
+Verify the Nomad client:
 
 ```bash
 nomad node status
 ```
 
-The configured Nomad client should report:
+The registered client should report `ready`.
 
-```text
-Status
-ready
+### Infrastructure Verification Evidence
+
+![Figure 01 — Docker, Nomad and Consul service readiness and Nomad client state](screenshots/01-Infrastructure-Services-and-Nomad-Client.png)
+
+*Figure 01 — Docker, Nomad and Consul service readiness, plus Nomad client state in the validated lab environment.*
+
+## Step 6 — Verify the Application Unit Tests
+
+Run the unit tests:
+
+```bash
+.venv/bin/python -m unittest discover -s tests -v
 ```
 
-This indicates that the Nomad client is registered and ready to accept scheduled workloads.
+The project contains nine Python unit tests covering the sample application behavior.
 
-### Step 8 — Verify the Deployed Application
+### Unit Test Evidence
 
-Check the Nomad job:
+![Figure 02 — Flask application unit tests](https://github.com/user-attachments/assets/5c24f789-bb5a-43aa-891b-6c03f9f01199)
+
+*Figure 02 — Nine passing Python application unit tests in the Ubuntu VM.*
+
+## Step 7 — Verify the Nomad Application
+
+Check the application job:
 
 ```bash
 nomad job status rollback-demo
@@ -263,24 +285,22 @@ Inspect the deployment history:
 nomad job deployments rollback-demo
 ```
 
-For a successful deployment, verify that:
+Verify that:
 
 - The Nomad job is running.
-- The latest deployment is successful.
 - The desired application allocation is running.
-- The deployment health checks are passing.
+- The deployment status is successful.
+- Health checks are passing.
 
-If the application is still starting, inspect its deployment status before proceeding.
+## Step 8 — Verify Application Health
 
-### Step 9 — Verify Application Health
-
-Run the project's health-verification script:
+Execute the project's health-verification script:
 
 ```bash
 bash scripts/phase4-verify.sh
 ```
 
-For a healthy installation, the script prints a PASS result containing the discovered application address, application version and health status.
+The verification script reports the application endpoint, version and health status.
 
 Example output format:
 
@@ -288,29 +308,17 @@ Example output format:
 PASS: http://<lab-ip>:<port>, version=<version>, health=healthy
 ```
 
-The actual application address and port depend on the local environment.
+The actual endpoint and port depend on the local environment.
 
-For a specific CI-deployed release, the script also accepts the first 12 hexadecimal characters of the deployed commit SHA:
+For an exact deployed commit version:
 
 ```bash
 bash scripts/phase4-verify.sh ea3ff5145bc7
 ```
 
-Use this example SHA only when that exact version has been deployed to the machine. A fresh local installation may use a different version.
+Only use this example commit SHA when that version is actually deployed.
 
-### Step 10 — Run Application Unit Tests
-
-Execute:
-
-```bash
-.venv/bin/python -m unittest discover -s tests -v
-```
-
-The validated project test suite contains nine Python unit tests.
-
-All tests should pass in a healthy installation.
-
-### Step 11 — Verify the Complete Lab Environment
+## Step 9 — Verify the Complete Setup
 
 Run:
 
@@ -318,17 +326,13 @@ Run:
 ./scripts/setup-lab.sh --check
 ```
 
-This command checks the existing environment without intentionally modifying the deployed application.
+This performs a non-destructive verification of the existing local lab configuration.
 
-For a healthy installation, the script reports a successful verification result.
+The setup script can also detect an existing `rollback-demo` job and skip redundant installation and deployment.
 
-The normal setup command can also detect an existing healthy `rollback-demo` deployment and skip redundant installation and deployment.
+A partially failed installation is not guaranteed to recover automatically; inspect the error before retrying.
 
-However, the script is not guaranteed to repair a partially failed initial installation. If setup fails, investigate the error logs before rerunning it.
-
-### Step 12 — Access the Nomad Web Interface
-
-The lab configures the Nomad HTTP API on the local loopback interface.
+## Step 10 — Access the Nomad Dashboard
 
 On the lab machine, open:
 
@@ -336,67 +340,65 @@ On the lab machine, open:
 http://127.0.0.1:4646/ui/
 ```
 
-From the Nomad dashboard, developers can inspect:
+The dashboard allows developers to inspect jobs, allocations, registered clients and deployment history.
 
-- Registered clients
-- Running jobs
-- Application allocations
-- Deployment history
-- Canary status
-- Deployment failures and recovery activity
-
-The Nomad administrative interface should not be exposed publicly.
+Nomad administrative APIs should remain restricted to trusted local interfaces.
 
 ---
 
-## 7. Local Setup and GitHub Actions CI/CD
+# 6. GitHub Actions CI/CD Pipeline
 
-The local installation and remote GitHub Actions workflow serve different purposes.
+The project uses GitHub Actions to automate the application delivery process.
 
-| Environment | Function |
-|---|---|
-| Local Ubuntu setup | Installs Docker, Nomad and Consul, then deploys the sample application |
-| GitHub Actions CI | Runs Python tests and builds/publishes Docker images |
-| GitHub Actions CD | Deploys an authorized image to the isolated Nomad VM |
-| Consul monitoring | Evaluates registered application health |
-| Nomad deployment controller | Manages canary promotion and automatic rollback |
+### CI/CD Process
 
-### Local Setup
+1. A reviewed change is merged into `main`.
+2. GitHub Actions starts the pipeline.
+3. Python unit tests execute.
+4. Docker Buildx builds the container image.
+5. The image is published to GHCR.
+6. An immutable image digest is recorded.
+7. Remote deployment runs only when explicitly enabled.
+8. Nomad deploys and evaluates the release.
+9. GitHub Actions reports the final deployment outcome.
 
-For developers who only want to run the sample application on Ubuntu:
+### Successful CI/CD Verification
 
-```bash
-git clone https://github.com/atiqa-ai/nomad-auto-rollback-lab.git
-cd nomad-auto-rollback-lab
-./scripts/setup-lab.sh
-./scripts/setup-lab.sh --check
-```
+The healthy pipeline was successfully demonstrated using GitHub Actions.
 
-### Remote CI/CD Setup
+![Figure 03 — Successful GitHub Actions CI/CD](https://github.com/user-attachments/assets/96ccd2db-2b0a-4683-ad0a-bd9fb16b0d51)
 
-Remote GitHub Actions deployment requires separate repository configuration, including authorized network connectivity, deployment credentials, and SSH host-key verification.
+*Figure 03 — Verified healthy release with passing Python tests, image publishing and VM deployment.*
 
-The workflow uses the repository variable:
+### Push-Triggered Deployment
+
+A later verification demonstrated that a real push to the repository's `main` branch could initiate the complete delivery workflow.
+
+**Verified GitHub Actions run:** [43481759119](https://github.com/atiqa-ai/nomad-auto-rollback-lab/actions/runs/43481759119)
+
+The run completed Python tests, Docker publishing, Tailscale connectivity, SSH configuration and successful Nomad deployment.
+
+### Deployment Safety Switch
+
+Remote deployment is controlled through:
 
 ```text
 LAB_CD_ENABLED
 ```
 
-When set to `false`, the remote Nomad deployment is skipped.
+When `LAB_CD_ENABLED=false`, the remote deployment job is skipped.
 
-When set to `true`, an authorized `main` workflow can attempt deployment to the configured lab environment.
+When enabled for an authorized test, the workflow can attempt deployment to the configured isolated VM.
 
-The bootstrap script does not automatically provision GitHub Actions secrets, Tailscale identities or remote deployment credentials.
-
-Keep automatic deployment disabled unless an authorized test is in progress.
+**The local setup script does not provision GitHub Actions secrets, Tailscale authentication or SSH deployment credentials.** Remote CI/CD requires separate authorized configuration.
 
 ---
 
-## 8. Nomad Canary Deployment Configuration
+# 7. Nomad Canary Deployment
 
-The project uses a controlled Nomad update strategy.
+The project uses Nomad canary deployments to evaluate candidate releases before promotion.
 
-The validated configuration includes:
+### Validated Update Configuration
 
 ```hcl
 update {
@@ -411,22 +413,41 @@ update {
 }
 ```
 
-### Configuration Explanation
+### Configuration Details
 
-| Parameter | Purpose |
+| Parameter | Description |
 |---|---|
-| `max_parallel` | Limits concurrent task replacements |
-| `canary` | Creates a candidate allocation for validation |
-| `auto_promote` | Automatically promotes healthy candidates |
-| `auto_revert` | Reverts failed deployments to the previous stable job |
-| `health_check` | Uses registered health checks for evaluation |
+| `max_parallel` | Limits concurrent replacements |
+| `canary` | Starts a candidate allocation |
+| `auto_promote` | Promotes a healthy candidate automatically |
+| `auto_revert` | Restores the prior stable job after a failed deployment |
+| `health_check` | Uses registered health checks |
 | `min_healthy_time` | Requires a minimum healthy period |
-| `healthy_deadline` | Limits the time allowed to become healthy |
-| `progress_deadline` | Limits time allowed for deployment progress |
+| `healthy_deadline` | Sets the deadline for becoming healthy |
+| `progress_deadline` | Sets the deployment progress deadline |
 
-### Consul Health Check
+### Nomad Deployment Evidence
 
-The application registers an HTTP health check using:
+![Figure 04 — Nomad job deployment overview](https://github.com/user-attachments/assets/f6e237db-df47-4c9d-b4ab-99e518430c91)
+
+*Figure 04 — Post-recovery Nomad job overview showing historical stable job version 8 and a healthy application allocation.*
+
+The screenshot documents the Phase 5 validation state. A subsequent healthy push-triggered release was verified as Nomad job version 9.
+
+---
+
+# 8. Consul Application Health Monitoring
+
+Consul is used to register and evaluate the sample application service.
+
+### Application Endpoints
+
+| Endpoint | Purpose |
+|---|---|
+| `/health` | Reports application health |
+| `/version` | Identifies the running application version |
+
+### Health Check Configuration
 
 ```hcl
 check {
@@ -438,60 +459,136 @@ check {
 }
 ```
 
-These settings were validated for the isolated sample application. They are not automatically suitable for production workloads.
+### Health Verification Process
+
+1. Nomad starts the application candidate.
+2. Consul evaluates the registered HTTP health check.
+3. Nomad evaluates deployment health requirements.
+4. A healthy candidate becomes eligible for promotion.
+5. An unhealthy candidate that fails the deployment requirements is not promoted.
+
+Health checks and deployment deadlines help distinguish stable application versions from unhealthy candidates.
 
 ---
 
-## 9. Verified Project Results
+# 9. Manual Rollback and Recovery
 
-The following outcomes were recorded during the project validation exercises on 13 November 2026.
+The project includes a manual recovery procedure for operators.
 
-| Validation | Recorded Result |
-|---|---|
-| Python unit tests | 9/9 passed |
-| Docker image publishing | Successful |
-| Nomad canary deployment | Successful |
-| Consul health checks | Passed |
-| Healthy candidate promotion | Successful |
-| Automatic rollback | Successfully demonstrated |
-| Manual rollback | Successfully demonstrated |
-| CI/CD failure propagation | Verified |
-| One-command setup script | Implemented and merged |
-| Push-triggered healthy deployment | Successful |
-| Final documentation workflow | Successful |
+A manual rollback can restore a previous Nomad job configuration when required.
 
-### Automatic Rollback Verification
+### Example Manual Revert
 
-An intentionally unhealthy application candidate was submitted through the deployment workflow.
-
-The candidate failed deployment health evaluation, triggering automatic reversion to the previous stable Nomad configuration.
-
-The previous healthy service was recovered, while the GitHub Actions deployment job still reported the candidate deployment failure.
-
-**Verified GitHub Actions run:**
-
-[Automatic Rollback and CI Failure Verification](https://github.com/atiqa-ai/nomad-auto-rollback-lab/actions/runs/43442086173)
-
-### Manual Rollback Verification
-
-The manual recovery exercise used:
+The recorded manual recovery exercise used:
 
 ```bash
 nomad job revert rollback-demo 4
 ```
 
-The command completed successfully during the recorded test.
+This command targets a specific historical job version and must not be executed without verifying that it is the intended recovery target.
 
-The measured recovery execution was approximately 12 seconds for that exercise.
+### Verification
 
-### Healthy Push-Triggered Deployment
+After an authorized revert, inspect:
 
-The final healthy deployment was verified after a reviewed change was merged into `main`.
+```bash
+nomad job status rollback-demo
+```
 
-| Verification | Result |
+And:
+
+```bash
+nomad job deployments rollback-demo
+```
+
+Run the application health verification to confirm successful recovery.
+
+### Manual Rollback Evidence
+
+![Figure 05 — Manual rollback recovery output](https://github.com/user-attachments/assets/6994aa3e-a721-4154-a0f6-abe62918a71a)
+
+*Figure 05 — Manual recovery event reaching a successful job version. The original recovery command and timing were preserved in the saved validation logs.*
+
+### Recorded Outcome
+
+The manual rollback command completed successfully in the recorded test.
+
+The recovery execution took approximately **12 seconds** in that exercise.
+
+This timing is specific to the observed lab recovery and is not a guaranteed production recovery time.
+
+---
+
+# 10. Automatic Rollback Validation
+
+The project's central validation scenario demonstrates how Nomad handles an unhealthy candidate release.
+
+### Failure Scenario
+
+An intentionally unhealthy application candidate is deployed into the isolated lab.
+
+The candidate fails to satisfy the configured health requirements within the deployment deadline.
+
+Nomad marks the deployment unsuccessful and automatically reverts the job configuration to the previous stable version.
+
+The GitHub Actions deployment job also reports failure.
+
+### Expected CI/CD Failure Evidence
+
+![Figure 06 — Expected GitHub Actions deployment failure](https://github.com/user-attachments/assets/d46b18cc-5fa5-428a-ba5d-71585002b74f)
+
+*Figure 06 — Controlled unhealthy candidate: application tests and image publishing passed, while the deployment stage failed as expected.*
+
+### Automatic Recovery Evidence
+
+![Figure 07 — CI-triggered automatic rollback log](https://github.com/user-attachments/assets/04600511-3a61-4374-b771-3dfacaf1e86f)
+
+*Figure 07 — Deployment deadline failure, automatic reversion to a stable configuration and CI deployment exit code 1.*
+
+### Verified Automatic Rollback Results
+
+The controlled CI/CD failure was recorded in:
+
+[GitHub Actions Run 43442086173](https://github.com/atiqa-ai/nomad-auto-rollback-lab/actions/runs/43442086173)
+
+The test demonstrated that:
+
+- The intentionally unhealthy candidate failed deployment.
+- Nomad automatically reverted to the previous stable configuration.
+- The recovery deployment completed successfully.
+- The application returned to a healthy state.
+- GitHub Actions correctly retained the failed deployment result.
+
+### Recorded Recovery Timing
+
+The earlier unhealthy v3 rollout exercise recorded 252 seconds for failure detection and recovery combined.
+
+A separate CI-triggered recovery exercise recorded approximately 12 seconds between the relevant failure and recovery events.
+
+These are lab execution measurements, not customer-facing outage durations or zero-downtime guarantees.
+
+---
+
+# 11. Final Application Health Verification
+
+After the rollback testing, the application and Nomad service were independently checked.
+
+The historical Phase 5 verification reported the stable `v2` application with passing health checks.
+
+### Final Health Evidence
+
+![Figure 08 — Final Nomad service health](screenshots/08-Final-Nomad-Service-Health.png)
+
+*Figure 08 — Historical Phase 5 final Nomad service health evidence following successful recovery.*
+
+### Latest Verified Healthy Deployment
+
+A subsequent push-triggered release successfully deployed a new application version.
+
+| Verification | Recorded Result |
 |---|---|
 | GitHub Actions run | `43481759119` |
-| Commit | `ea3ff5145bc7` |
+| Deployed commit | `ea3ff5145bc7` |
 | Nomad job version | `9` |
 | Deployment ID | `ef6bf59a` |
 | Deployment status | Successful |
@@ -499,71 +596,135 @@ The final healthy deployment was verified after a reviewed change was merged int
 | Healthy allocations | 1 |
 | Unhealthy allocations | 0 |
 | Application health | Healthy |
+| Deployment safety variable | Restored to `false` |
 
-[View Successful Push-Triggered Deployment](https://github.com/atiqa-ai/nomad-auto-rollback-lab/actions/runs/43481759119)
+The final independent verification reported:
 
+```text
+PASS: http://192.168.122.83:20285, version=ea3ff5145bc7, health=healthy
+```
 
+The address above is historical lab evidence, not a fixed endpoint that new users should expect on their own machines.
 
-**Historical evidence:** Earlier Phase 5 tests used application version `v2` and Nomad job version `8`. The later successful push-triggered deployment used job version `9`. Both are retained as separate validation records.
-
-**Fresh-VM evidence:** Setup on a separate VM was reported as successful, but its original clean-bootstrap logs have not been independently reviewed in this documentation.
+**Important:** Figures 04 and 08 represent historical Phase 5 evidence. The newer job version 9 result was independently verified through terminal output and the successful GitHub Actions workflow.
 
 ---
 
-## 10. Project Documentation
+# 12. Project Validation Summary
+
+| Feature | Validation Result |
+|---|---|
+| Flask application | Implemented |
+| Docker containerization | Verified |
+| Python unit tests | 9/9 passed |
+| GitHub Actions CI/CD | Verified |
+| GHCR image publishing | Verified |
+| Nomad canary deployment | Verified |
+| Consul health checks | Verified |
+| Automatic candidate promotion | Verified |
+| Automatic rollback | Verified |
+| Manual rollback | Verified |
+| CI/CD failure propagation | Verified |
+| One-command setup script | Implemented and merged |
+| Successful push-triggered deployment | Verified |
+| Documentation and reports | Integrated |
+| Independent fresh-VM bootstrap evidence | Original bootstrap log not independently reviewed |
+| Mentor acceptance | Pending |
+
+The implementation and functional behavior were demonstrated in the isolated lab. The original clean-VM bootstrap log and formal mentor acceptance remain separate evidence requirements.
+
+---
+
+# 13. Repository Structure
+
+```text
+nomad-auto-rollback-lab/
+│
+├── .github/
+│   └── workflows/
+│       └── ci-cd.yml
+│
+├── app/
+│   ├── app.py
+│   ├── __init__.py
+│   └── requirements.txt
+│
+├── tests/
+│   └── test_health.py
+│
+├── nomad/
+│   └── rollback-demo.nomad.hcl
+│
+├── scripts/
+│   ├── setup-lab.sh
+│   ├── nomad-lab-deploy.sh
+│   ├── phase4-preflight.sh
+│   └── phase4-verify.sh
+│
+├── docs/
+│
+├── reports/
+│
+├── screenshots/
+│
+├── Dockerfile
+├── .dockerignore
+├── .gitignore
+└── README.md
+```
+
+### Important Components
+
+- `app/` — Flask application and dependencies.
+- `tests/` — Automated application tests.
+- `nomad/` — Nomad deployment configuration.
+- `scripts/` — Bootstrap, deployment and verification utilities.
+- `.github/workflows/` — GitHub Actions automation.
+- `docs/` — Architecture, installation and operational documentation.
+- `reports/` — Final technical report.
+- `screenshots/` — Recorded project evidence.
+
+---
+
+# 14. Documentation and Reports
+
+The repository includes technical and operational documentation for installation, verification and project handover.
 
 | Document | Description |
 |---|---|
-| [Final Technical Report](reports/Nomad_Automatic_Rollback_Final_Report_GitHub.md) | Implementation, results and conclusions |
-| [Project Completion Summary](docs/PROJECT_COMPLETION_SUMMARY.md) | Completed work and outcomes |
-| [Architecture Documentation](docs/architecture.md) | Architecture and component design |
-| [Installation and Reproducibility](docs/INSTALLATION_AND_REPRODUCIBILITY.md) | Detailed installation instructions |
-| [Validation Report](docs/VALIDATION.md) | Tests, evidence and acceptance status |
-| [Operational Runbook](docs/OPERATIONAL_RUNBOOK.md) | Deployment operations and recovery |
-| [Deployment Review Checklist](docs/DEPLOYMENT_REVIEW_CHECKLIST.md) | Deployment configuration and safety review |
-| [Final Handover Checklist](docs/FINAL_HANDOVER_CHECKLIST.md) | Project deliverables and acceptance |
-| [Phase 5 Rollback Report](docs/PHASE5_ROLLBACK_TEST_REPORT.md) | Automatic and manual rollback evidence |
-| [Push-Triggered Deployment Verification](docs/PUSH_TRIGGERED_DEPLOYMENT_TEST.md) | Verified deployment through GitHub Actions |
+| [Final Project Report](reports/Nomad_Automatic_Rollback_Final_Report_GitHub.md) | Complete technical implementation and validation report |
+| [Project Completion Summary](docs/PROJECT_COMPLETION_SUMMARY.md) | Completed development activities and outcomes |
+| [Architecture Documentation](docs/architecture.md) | Architecture, system components and workflow |
+| [Installation and Reproducibility](docs/INSTALLATION_AND_REPRODUCIBILITY.md) | Installation requirements and reproduction guidance |
+| [Validation Matrix](docs/VALIDATION.md) | Verification evidence and acceptance status |
+| [Operational Runbook](docs/OPERATIONAL_RUNBOOK.md) | Deployment, troubleshooting and recovery operations |
+| [Rollback Test Report](docs/PHASE5_ROLLBACK_TEST_REPORT.md) | Controlled failure, automatic rollback and manual recovery |
+| [Push-Triggered Deployment Test](docs/PUSH_TRIGGERED_DEPLOYMENT_TEST.md) | Successful push-triggered deployment evidence |
+| [Deployment Review Checklist](docs/DEPLOYMENT_REVIEW_CHECKLIST.md) | Nomad configuration and deployment safety review |
+| [Final Handover Checklist](docs/FINAL_HANDOVER_CHECKLIST.md) | Final project deliverables and acceptance activities |
 | [Evidence Index](docs/EVIDENCE_INDEX.md) | Screenshot and log evidence |
-| [Screenshot Guide](screenshots/README.md) | Screenshots and figure captions |
-
-### Project Evidence Screenshots
-
-The repository includes eight screenshots documenting the deployment environment and validation results.
-
-1. Infrastructure services and Nomad client
-2. Flask application unit tests
-3. Successful GitHub Actions CI/CD
-4. Nomad job deployment overview
-5. Manual rollback recovery
-6. Expected GitHub Actions deployment failure
-7. CI-triggered automatic rollback
-8. Final Nomad service health
-
-[View Project Screenshots](screenshots/)
-
-These screenshots represent recorded test results rather than live deployment monitoring.
+| [Screenshot Guide](screenshots/README.md) | Figure descriptions and evidence images |
 
 ---
 
-## 11. Troubleshooting
+# 15. Troubleshooting Guide
 
-### Check Docker
+### Check Docker Service
 
 ```bash
 sudo systemctl status docker --no-pager
 ```
 
-### Check Consul
-
-```bash
-sudo systemctl status consul-rollback-lab --no-pager
-```
-
-### Check Nomad
+### Check Nomad Service
 
 ```bash
 sudo systemctl status nomad-rollback-lab --no-pager
+```
+
+### Check Consul Service
+
+```bash
+sudo systemctl status consul-rollback-lab --no-pager
 ```
 
 ### Inspect Nomad Logs
@@ -584,155 +745,93 @@ sudo journalctl -u consul-rollback-lab -n 50 --no-pager
 nomad node status
 ```
 
-### Check Application
+### Check Application Job
 
 ```bash
 nomad job status rollback-demo
 ```
 
-### Verify Health
+### Inspect Deployment History
+
+```bash
+nomad job deployments rollback-demo
+```
+
+### Verify Application Health
 
 ```bash
 bash scripts/phase4-verify.sh
 ```
 
-If a deployment fails, review Nomad deployment history and Consul health checks before initiating manual recovery.
+### Verify the Complete Local Environment
 
-For advanced troubleshooting, refer to the [Operational Runbook](docs/OPERATIONAL_RUNBOOK.md).
-
----
-
-## 12. Security and Safety Considerations
-
-- Run the project only on an isolated lab machine or authorized test environment.
-- Never commit SSH private keys, access tokens or Tailscale authentication secrets.
-- Keep Nomad and Consul administrative APIs restricted to trusted interfaces.
-- Use pinned SSH host keys for remote deployment.
-- Deploy container images using immutable references.
-- Use intentional failure testing only within the isolated lab.
-- Restore `LAB_CD_ENABLED=false` after authorized deployment testing.
-- Review deployment configuration before adapting the project to another environment.
-- Production deployment requires separate authorization and engineering assessment.
-
----
-
-## 13. Project Status and Handover
-
-The Nomad Automatic Rollback Lab demonstrates a complete application delivery and recovery workflow using Docker, GitHub Actions, Nomad and Consul.
-
-The validated technical implementation includes automated testing, image publishing, health-gated canary deployment, successful candidate promotion, automatic rollback, manual recovery and CI/CD failure propagation.
-
-The repository also contains installation instructions, a one-command bootstrap script, architecture documentation, operational procedures, technical reports, deployment review checklists and evidence screenshots.
-
-**Current Status:** Core implementation and functional validation completed. Documentation integrated into the repository. Final organizational acceptance remains subject to mentor or authorized engineer review.
-
-**Repository:** https://github.com/atiqa-ai/nomad-auto-rollback-lab
-
-**Project Scope:** Isolated DevOps lab and reproducible demonstration. No production deployment is claimed.
-
-## linked documentation
-
-All links below open directly into the matching file within this extracted package. Preserve the folder structure when copying documentation into the Git repository.
-
-| Document | Use it for |
-| --- | --- |
-| **[Final project report](docs/PROJECT_REPORT.md)** | Executive summary, objective, design, implementation, verified results, screenshots, conclusion |
-| [Project completion summary](docs/PROJECT_COMPLETION_SUMMARY.md) | One-page verified work and outcomes for submission |
-| [Architecture and technical design](docs/architecture.md) | Component responsibilities, flows, Nomad policy, network and data boundaries |
-| [Installation and reproducibility](docs/INSTALLATION_AND_REPRODUCIBILITY.md) | Prerequisites, initial setup, verification and known reproducibility gaps |
-| [Consolidated validation and acceptance matrix](docs/VALIDATION.md) | Pass/fail results and explicit unverified acceptance conditions |
-| [Operational runbook](docs/OPERATIONAL_RUNBOOK.md) | Safe deployment, verification, triage and manual recovery commands |
-| [Screenshot and log evidence index](docs/EVIDENCE_INDEX.md) | Eight evidence images, saved log inventory, correct interpretation |
-| [Final handover checklist](docs/FINAL_HANDOVER_CHECKLIST.md) | Deliverables, outstanding checks and transfer steps |
-| [Documentation audit and proofreading](docs/DOCUMENTATION_AUDIT.md) | Corrected outdated claims, verified file links and report formatting 
-| [Screenshot folder guide](screenshots/README.md) | Direct image links and ready-to-use figure captions |
-
-**Viewing evidence images:** The standalone Markdown report embeds its eight PNGs directly, but some Markdown viewers block embedded images for security. If pictures are not visible in your viewer, open the **offline HTML preview** in a browser. For GitHub, use the **GitHub-compatible Markdown report** with the `screenshots/` directory kept alongside it in the extracted folder hierarchy.
-
-## Verified system at a glance
-
-| Area | Verified outcome |
-| --- | --- |
-| Application | Flask/Gunicorn service, `/health` and `/version`; health behavior controlled for lab testing |
-| Tests | **9/9 Python unit tests** passed in a terminal session on the VM `mariana` |
-| Containerization | Docker image built/published and immutable GHCR digest deployed |
-| Orchestration | Nomad service job `rollback-demo`, one running allocation after final recovery |
-| Health | Consul HTTP check; final independent verification returned `version=v2`, `health=healthy` |
-| CI/CD | Successful full pipeline: GitHub Actions run **43426413120** |
-| Failure propagation | Deliberately unhealthy CI deployment failed: run **43442086173**, deployment step exit `1` |
-| Automatic rollback | Failed CI canary reverted to stable Nomad job version **6**; recovery version **8** succeeded |
-| Manual rollback | `nomad job revert rollback-demo 4` returned `0`; recovery execution took **12 seconds** |
-| Final job status | Nomad job version **8** stable; last observed deployment `f2b389f5` successful |
-
-**Observed timing:** First unhealthy v3 command completed in **252 seconds including failure detection and recovery**. In the CI-triggered exercise, the recorded interval from failure/rollback log to successful recovery was approximately **12 seconds**. These are **not measurements of customer-facing outage duration**, and they are not equivalent test intervals.
-
-## Workflow summary
-
-1. Review/merge code to `main`; CI runs the Python tests.
-2. On `main` runs, publish an image with a commit-specific tag and immutable SHA256 digest to GHCR.
-3. If `LAB_CD_ENABLED=true`, connect the GitHub-hosted runner to the isolated VM over tagged Tailscale access and pinned-host-key SSH.
-4. On the VM, validate the commit and image digest, evaluate the Nomad plan, and submit an update with a compare-and-swap job index.
-5. Nomad starts a canary. Consul and application `/health` checks determine whether it qualifies for promotion.
-6. A failed canary triggers configured automatic reversion to the last stable job; CI preserves the failed rollout result even after recovery.
-7. Operators can also run an explicit manual revert for incident recovery.
-
-See the [architecture](docs/architecture.md), [release guide](docs/PHASE4_VM_GUIDE.md), and [incident runbook](docs/OPERATIONAL_RUNBOOK.md) for details.
-
-## Repository layout
-
-```text
-app/                         Flask service
-  app.py                     HTTP endpoints and health behavior
-  requirements.txt           Application dependencies
-tests/test_health.py         Nine application unit tests
-Dockerfile                   Gunicorn container image
-nomad/rollback-demo.nomad.hcl Nomad job with canary/health/revert policy
-.github/workflows/ci-cd.yml CI tests, GHCR publishing and VM deployment
-scripts/                     Preflight, monitored deployment, verification
-README.md                    Documentation entrypoint
-docs/                        Technical and operational documents
-reports/                     Final Markdown report
-screenshots/                 Redacted/selected evidence captures
+```bash
+./scripts/setup-lab.sh --check
 ```
 
-The deliverable ZIP contains the **documentation, Markdown report and evidence images**, not a replacement copy of the application's source code. Copy only the documentation files you intend to merge into the existing Git repository; do not overwrite `app/`, `nomad/`, `.github/`, or `scripts/` with documentation artifacts.
+For advanced recovery and troubleshooting, refer to the [Operational Runbook](docs/OPERATIONAL_RUNBOOK.md).
 
-##  screenshot evidence
+---
 
-The following eight visual records supplement the test-result tables and log summary.
+# 16. Security and Operational Considerations
 
+The project follows an isolated-lab approach.
 
-![Infrastructure services and Nomad client]
-(<img width="1280" height="800" alt="01-Infrastructure-Services-and-Nomad-Client" src="https://github.com/user-attachments/assets/07d7ade3-4a8c-4030-9e4e-06fcbd66aed6" />
+Important precautions include:
 
-*Figure 01 — Docker, Nomad and Consul service readiness, plus Nomad client state.*
+- Run the system only in an authorized testing environment.
+- Do not expose Nomad or Consul administrative APIs publicly.
+- Do not commit SSH keys, tokens or other confidential credentials.
+- Use trusted and pinned SSH host keys for remote connections.
+- Deploy images through immutable image references.
+- Review Nomad deployment plans before applying changes.
+- Restrict intentional unhealthy deployments to isolated test environments.
+- Keep `LAB_CD_ENABLED=false` when remote deployment is not required.
+- Review health checks and recovery settings before adapting the lab to another environment.
+- Require separate engineering authorization before considering production use.
 
-![Flask application unit tests](<img width="1280" height="800" alt="02-Flask-Application-Unit-Tests" src="https://github.com/user-attachments/assets/5c24f789-bb5a-43aa-891b-6c03f9f01199" />
+---
 
-*Figure 02 — Nine passing Python application unit tests in the Ubuntu VM.*
+# 17. Project Outcomes
 
-![Successful GitHub Actions CI/CD](<img width="1280" height="800" alt="03-Successful-GitHub-Actions-CI-CD" src="https://github.com/user-attachments/assets/96ccd2db-2b0a-4683-ad0a-bd9fb16b0d51" />
+The Nomad Automatic Rollback Lab demonstrates a complete controlled application delivery and recovery workflow.
 
-*Figure 03 — Verified healthy release with passing tests, image publish and VM deployment.*
+### Key Achievements
 
-![Nomad job overview](<img width="1280" height="800" alt="04-Nomad-Job-Deployment-Overview" src="https://github.com/user-attachments/assets/f6e237db-df47-4c9d-b4ab-99e518430c91" />
+- Developed and tested a containerized Flask application.
+- Implemented GitHub Actions automation for testing and image publishing.
+- Integrated Docker and GHCR with Nomad deployment.
+- Configured health-gated canary releases.
+- Enabled automatic promotion of healthy candidates.
+- Demonstrated automatic reversion of unhealthy releases.
+- Verified manual rollback and recovery operations.
+- Preserved accurate failure reporting in GitHub Actions.
+- Implemented a one-command Ubuntu setup script.
+- Verified an actual push-triggered healthy application deployment.
+- Prepared architecture, operational, installation and handover documentation.
 
-*Figure 04 — Post-recovery Nomad job overview: stable version 8 and healthy allocation.*
+The project provides a reproducible reference for DevOps engineers and students exploring progressive application delivery, orchestration and automated recovery.
 
-![Manual rollback recovery output](<img width="1280" height="800" alt="05-Manual-Rollback-Recovery-Output" src="https://github.com/user-attachments/assets/6994aa3e-a721-4154-a0f6-abe62918a71a" />
+---
 
-*Figure 05 — Manual recovery event reaches a successful job version; original command in the saved log.*
+# 18. Final Project Status
 
-![Expected GitHub Actions deployment failure](<img width="1280" height="800" alt="06-Expected-GitHub-Actions-Deployment-Failure" src="https://github.com/user-attachments/assets/d46b18cc-5fa5-428a-ba5d-71585002b74f" />
+**Core Technical Implementation:** Completed and validated.
 
-*Figure 06 — Controlled unhealthy candidate: test/build jobs passed and deployment failed.*
+**CI/CD Integration:** Verified.
 
-![CI-triggered automatic rollback log](<img width="1280" height="800" alt="07-CI-Triggered-Automatic-Rollback-Log" src="https://github.com/user-attachments/assets/04600511-3a61-4374-b771-3dfacaf1e86f" />
+**Nomad Canary and Automatic Rollback:** Verified.
 
-*Figure 07 — Deadline failure, revert to stable configuration and CI exit code 1.*
+**Manual Rollback:** Verified.
 
-![Final Nomad service dashboard](<img width="1280" height="800" alt="08-Final-Nomad-Service-Health" src="https://github.com/user-attachments/assets/7c180511-6483-4b60-a2c9-f7717c1e78c8" />
+**Push-Triggered Healthy Deployment:** Verified.
 
-*Figure 08 — Final successful Nomad deployment dashboard; independent HTTP v2 health is recorded separately.*
+**Documentation and Evidence:** Integrated into the project repository.
 
+**Formal Acceptance:** Subject to mentor or authorized engineer review.
 
+The project is intended for an isolated DevOps laboratory. It does not represent a production deployment.
+
+### Repository
+
+https://github.com/atiqa-ai/nomad-auto-rollback-lab
