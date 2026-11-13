@@ -33,15 +33,11 @@ All links below open directly into the matching file within this extracted packa
 | Document | Use it for |
 | --- | --- |
 | **[Final project report](docs/PROJECT_REPORT.md)** | Executive summary, objective, design, implementation, verified results, screenshots, conclusion |
-
-| [Final report — offline browser preview (.html)](reports/Nomad_Automatic_Rollback_Final_Report_Offline.html) | Self-contained view with all evidence images visible in a browser |
-| [Final report — GitHub-compatible (.md)](reports/Nomad_Automatic_Rollback_Final_Report_GitHub.md) | Same wording with relative PNG links, suited to viewing inside the extracted project folder or GitHub repo |
 | [Project completion summary](docs/PROJECT_COMPLETION_SUMMARY.md) | One-page verified work and outcomes for submission |
 | [Architecture and technical design](docs/architecture.md) | Component responsibilities, flows, Nomad policy, network and data boundaries |
 | [Installation and reproducibility](docs/INSTALLATION_AND_REPRODUCIBILITY.md) | Prerequisites, initial setup, verification and known reproducibility gaps |
 | [Consolidated validation and acceptance matrix](docs/VALIDATION.md) | Pass/fail results and explicit unverified acceptance conditions |
 | [Operational runbook](docs/OPERATIONAL_RUNBOOK.md) | Safe deployment, verification, triage and manual recovery commands |
-| [Deployment review checklist](docs/DEPLOYMENT_REVIEW_CHECKLIST.md) | Pre-deployment, promotion, revert and post-release checks |
 | [Screenshot and log evidence index](docs/EVIDENCE_INDEX.md) | Eight evidence images, saved log inventory, correct interpretation |
 | [Final handover checklist](docs/FINAL_HANDOVER_CHECKLIST.md) | Deliverables, outstanding checks and transfer steps |
 | [Documentation audit and proofreading](docs/DOCUMENTATION_AUDIT.md) | Corrected outdated claims, verified file links and report formatting 
