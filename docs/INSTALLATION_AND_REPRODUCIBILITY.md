@@ -120,4 +120,4 @@ gh variable list
 
 **Validated in existing VM:** tests, Nomad/Consul job, healthy canary, bad canary rejection, automatic/manual revert, full CI publish/deploy and failure propagation. **Not validated from empty VM:** turnkey installation, repeatable provisioning without manual configuration, first-time Tailscale OAuth onboarding, OS reinstallation/host replacement and long-duration availability. Do not label a fresh environment “ready” until it passes its own acceptance matrix and supplies time-stamped evidence.
 
-Next reading: [Phase 4 VM guide](PHASE4_VM_GUIDE.md) → [operational runbook](OPERATIONAL_RUNBOOK.md) → [final validation](VALIDATION.md).
+Next reading: [operational runbook](OPERATIONAL_RUNBOOK.md) → [final validation](VALIDATION.md).
