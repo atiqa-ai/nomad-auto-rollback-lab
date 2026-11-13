@@ -71,3 +71,24 @@ The script's exit status and actual `PASS:` line are both required for health si
 ## 5. Final validation statement
 
 Within the explicitly defined lab scope, the system implemented and demonstrated **successful and failed canary releases, automatic and manual reversion, immutable artifact deployment and truthful CI/CD failure reporting**. Remaining validation items A15–A17 must remain open until independently tested, and A19 is not claimed. See the [handover checklist](FINAL_HANDOVER_CHECKLIST.md) for closure ownership.
+
+## Phase 6 — Final Push-Triggered Deployment Verification
+
+On 13 November 2026, GitHub Actions run `43481759119`
+was triggered by a push to `main`.
+
+- Python unit tests: passed
+- Docker build and GHCR publishing: passed
+- Tailscale and SSH connectivity: passed
+- Nomad deployment: successful
+- Deployed commit: `ea3ff5145bc7`
+- Nomad job version: `9`
+- Deployment ID: `ef6bf59a`
+- Canary promotion: successful
+- Healthy allocations: `1`
+- Unhealthy allocations: `0`
+- Application verification: `health=healthy`
+- Deployment gate: restored to `LAB_CD_ENABLED=false`
+
+Earlier `v2` and job version `8` results remain valid
+historical evidence of Phase 5 rollback testing.
