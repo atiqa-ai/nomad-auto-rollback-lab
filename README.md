@@ -4,7 +4,27 @@
 
 This repository demonstrates a controlled application delivery pipeline using **GitHub Actions, Docker, GitHub Container Registry (GHCR), HashiCorp Nomad, Consul, Tailscale, and SSH**. Healthy canaries can be promoted; intentionally unhealthy canaries are rejected, Nomad restores the last stable configuration, and the initiating CI/CD job still reports failure.
 
-> **Lab scope:** Local/sandbox demonstration only. This is **not** a production-ready deployment system. The project has **not** verified a one-command bootstrap on a fresh VM, measured zero downtime, or implemented enterprise-grade access control. Historical results in the report are labeled as tested evidence, not as current live measurements.
+
+
+## Deployment Topology
+
+```mermaid
+flowchart TD
+    A["GitHub Source / Reviewed Main Branch"] --> B["GitHub Actions: Python Tests"]
+    B --> C["Docker Buildx + GHCR Image Digest"]
+    C --> D{"LAB_CD_ENABLED == true?"}
+    D -->|No| E["No VM Deployment"]
+    D -->|Yes| F["Temporary Tailscale CI Runner"]
+    F --> G["Pinned-Key SSH to Ubuntu VM mariana"]
+    G --> H["VM Deploy Script: Commit and Digest Validation"]
+    H --> I["Nomad Job Validate, Plan, Check-Index Run"]
+    I --> J["Nomad Canary Allocation"]
+    J --> K{"Consul HTTP /health Check"}
+    K -->|Pass| L["Auto-Promote Candidate"]
+    K -->|Progress Deadline Exceeded| M["Auto-Revert to Last Stable Job"]
+    M --> N["CI Reports Candidate Deployment Failure"]
+```
+
 
 ## Start here — linked documentation
 
