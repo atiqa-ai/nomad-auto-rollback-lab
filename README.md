@@ -26,7 +26,7 @@ flowchart TD
 ```
 
 
-## Start here — linked documentation
+## linked documentation
 
 All links below open directly into the matching file within this extracted package. Preserve the folder structure when copying documentation into the Git repository.
 
@@ -39,12 +39,8 @@ All links below open directly into the matching file within this extracted packa
 | [Project completion summary](docs/PROJECT_COMPLETION_SUMMARY.md) | One-page verified work and outcomes for submission |
 | [Architecture and technical design](docs/architecture.md) | Component responsibilities, flows, Nomad policy, network and data boundaries |
 | [Installation and reproducibility](docs/INSTALLATION_AND_REPRODUCIBILITY.md) | Prerequisites, initial setup, verification and known reproducibility gaps |
-| [Phase 2 application/container validation](docs/phase2-validation.md) | Flask tests, Docker health behavior and evidence provenance |
-| [Phase 4 VM/CI-CD deployment guide](docs/PHASE4_VM_GUIDE.md) | GHCR, GitHub Actions, Tailscale, SSH, release and configuration procedure |
-| [Phase 5 rollback test report](docs/PHASE5_ROLLBACK_TEST_REPORT.md) | Healthy and unhealthy canaries, manual revert, timing, CI failure test |
 | [Consolidated validation and acceptance matrix](docs/VALIDATION.md) | Pass/fail results and explicit unverified acceptance conditions |
 | [Operational runbook](docs/OPERATIONAL_RUNBOOK.md) | Safe deployment, verification, triage and manual recovery commands |
-| [Security, risks and limitations](docs/SECURITY_AND_RISKS.md) | Isolation boundaries, credentials, threat and risk assessment |
 | [Deployment review checklist](docs/DEPLOYMENT_REVIEW_CHECKLIST.md) | Pre-deployment, promotion, revert and post-release checks |
 | [Screenshot and log evidence index](docs/EVIDENCE_INDEX.md) | Eight evidence images, saved log inventory, correct interpretation |
 | [Final handover checklist](docs/FINAL_HANDOVER_CHECKLIST.md) | Deliverables, outstanding checks and transfer steps |
