@@ -1,5 +1,5 @@
 
-# Nomad Automatic Rollback Lab
+# pipeline with canary and automated rollback on Nomad
 
 ### Automated CI/CD, Health-Gated Canary Deployment and Self-Recovery with HashiCorp Nomad
 
@@ -71,7 +71,7 @@ The system implements a controlled deployment workflow that:
 
 ## 4. System Architecture
 
-The project follows a Git-based CI/CD pipeline integrated with a Nomad-managed application environment.
+The project follows a Git-based CI/CD pipeline integrated with a Nomad-managed application on isolated environment.
 
 ```mermaid
 flowchart TD
