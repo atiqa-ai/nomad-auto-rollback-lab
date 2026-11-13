@@ -6,6 +6,12 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      failure_test:
+        description: 'Intentionally unhealthy canary - lab only'
+        type: boolean
+        required: false
+        default: false
 
 permissions:
   contents: read
@@ -102,6 +108,7 @@ jobs:
           LAB_TAILSCALE_IP: ${{ vars.LAB_TAILSCALE_IP }}
           COMMIT_SHA: ${{ github.sha }}
           IMAGE_DIGEST: ${{ needs.publish.outputs.digest }}
+          HEALTH_MODE: ${{ github.event_name == 'workflow_dispatch' && inputs.failure_test && 'unhealthy' || 'healthy' }}
         run: |
           set -euo pipefail
           [[ "$LAB_TAILSCALE_IP" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]
@@ -113,4 +120,4 @@ jobs:
             -o StrictHostKeyChecking=yes \
             -o ConnectTimeout=20 \
             "manoo@${LAB_TAILSCALE_IP}" \
-            "/home/manoo/bin/nomad-lab-deploy '${COMMIT_SHA}' '${IMAGE_DIGEST}'"
+            "/home/manoo/bin/nomad-lab-deploy '${COMMIT_SHA}' '${IMAGE_DIGEST}' '${HEALTH_MODE}'"
