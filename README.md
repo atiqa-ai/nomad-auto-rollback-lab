@@ -97,6 +97,41 @@ screenshots/                 Redacted/selected evidence captures
 
 The deliverable ZIP contains the **documentation, Markdown report and evidence images**, not a replacement copy of the application's source code. Copy only the documentation files you intend to merge into the existing Git repository; do not overwrite `app/`, `nomad/`, `.github/`, or `scripts/` with documentation artifacts.
 
+##  screenshot evidence
+
+The following eight visual records supplement the test-result tables and log summary.
+![Infrastructure services and Nomad client](../screenshots/01-Infrastructure-Services-and-Nomad-Client.png)
+
+*Figure 01 — Docker, Nomad and Consul service readiness, plus Nomad client state.*
+
+![Flask application unit tests](../screenshots/02-Flask-Application-Unit-Tests.png)
+
+*Figure 02 — Nine passing Python application unit tests in the Ubuntu VM.*
+
+![Successful GitHub Actions CI/CD](../screenshots/03-Successful-GitHub-Actions-CI-CD.png)
+
+*Figure 03 — Verified healthy release with passing tests, image publish and VM deployment.*
+
+![Nomad job overview](../screenshots/04-Nomad-Job-Deployment-Overview.png)
+
+*Figure 04 — Post-recovery Nomad job overview: stable version 8 and healthy allocation.*
+
+![Manual rollback recovery output](../screenshots/05-Manual-Rollback-Recovery-Output.png)
+
+*Figure 05 — Manual recovery event reaches a successful job version; original command in the saved log.*
+
+![Expected GitHub Actions deployment failure](../screenshots/06-Expected-GitHub-Actions-Deployment-Failure.png)
+
+*Figure 06 — Controlled unhealthy candidate: test/build jobs passed and deployment failed.*
+
+![CI-triggered automatic rollback log](../screenshots/07-CI-Triggered-Automatic-Rollback-Log.png)
+
+*Figure 07 — Deadline failure, revert to stable configuration and CI exit code 1.*
+
+![Final Nomad service dashboard](../screenshots/08-Final-Nomad-Service-Health.png)
+
+*Figure 08 — Final successful Nomad deployment dashboard; independent HTTP v2 health is recorded separately.*
+
 ## Quick verification on the existing VM
 
 Run inside **`mariana`**, not on a physical host or production server:
@@ -119,4 +154,4 @@ Expected for the documented final state: Nomad running, passing Consul service, 
 - Do not publish Nomad (`4646`) or Consul (`8500`) APIs to public networks. Their lab API endpoints were bound to loopback.
 - The test switch `failure_test=true` intentionally creates an unhealthy canary; enable only for an authorized, isolated demonstration, and disable `LAB_CD_ENABLED` afterward.
 - Version, job IDs, deployment IDs, timestamps, and screenshots here are **historical evidence dated 13 November 2026**.
-- For remaining gaps, see [validation](docs/VALIDATION.md), [risks](docs/SECURITY_AND_RISKS.md), and [handover](docs/FINAL_HANDOVER_CHECKLIST.md).
+- For remaining gaps, see [validation](docs/VALIDATION.md), and [handover](docs/FINAL_HANDOVER_CHECKLIST.md).
