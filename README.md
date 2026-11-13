@@ -12,7 +12,7 @@ All links below open directly into the matching file within this extracted packa
 
 | Document | Use it for |
 | --- | --- |
-| **[Final project report](docs/PROJECT_REPORT.md)** | Executive summary, objective, design, implementation, verified results, limitations, conclusion |
+| **[Final project report](Nomad_Automatic_Rollback_Final_Report.md)** | Executive summary, objective, design, implementation, verified results, limitations, conclusion |
 | **[Word version of final report](reports/Nomad_Automatic_Rollback_Final_Report.docx)** | Editable formal report, ready for institutional formatting and submission |
 | [Project completion summary](docs/PROJECT_COMPLETION_SUMMARY.md) | One-page verified work and outcomes for submission |
 | [Architecture and technical design](docs/architecture.md) | Component responsibilities, flows, Nomad policy, network and data boundaries |
