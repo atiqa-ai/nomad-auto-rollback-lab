@@ -1,6 +1,6 @@
 # Nomad Automatic Rollback Lab
 
-**Project status:** Five engineering phases verified; project documentation and handover consolidated on **13 November 2026**. The lab is running a healthy `v2` demonstration service on a dedicated Ubuntu VM. GitHub's automatic deployment switch was set to `false` after testing.
+**Project**
 
 This repository demonstrates a controlled application delivery pipeline using **GitHub Actions, Docker, GitHub Container Registry (GHCR), HashiCorp Nomad, Consul, Tailscale, and SSH**. Healthy canaries can be promoted; intentionally unhealthy canaries are rejected, Nomad restores the last stable configuration, and the initiating CI/CD job still reports failure.
 
