@@ -1,188 +1,103 @@
 # Nomad Automatic Rollback Lab
 
-> **Status:** Application and container behavior demonstrated; final sandbox-VM retest and the Nomad/GitHub Actions pipeline are **not yet complete**.
+**Project status:** Five engineering phases verified; project documentation and handover consolidated on **13 November 2026**. The lab is running a healthy `v2` demonstration service on a dedicated Ubuntu VM. GitHub's automatic deployment switch was set to `false` after testing.
 
-## Purpose
+This repository demonstrates a controlled application delivery pipeline using **GitHub Actions, Docker, GitHub Container Registry (GHCR), HashiCorp Nomad, Consul, Tailscale, and SSH**. Healthy canaries can be promoted; intentionally unhealthy canaries are rejected, Nomad restores the last stable configuration, and the initiating CI/CD job still reports failure.
 
-This repository is a lab-only demonstration of safe application delivery with GitHub Actions, Docker, HashiCorp Nomad, and Consul. The target workflow is to push a change to `main`, build and publish an immutable container image, deploy it as a Nomad canary, check its health through Consul, and automatically revert a failed deployment to the last stable job version. CI must report a failed rollout as a failure even when the rollback restores service.
+> **Lab scope:** Local/sandbox demonstration only. This is **not** a production-ready deployment system. The project has **not** verified a one-command bootstrap on a fresh VM, measured zero downtime, or implemented enterprise-grade access control. Historical results in the report are labeled as tested evidence, not as current live measurements.
 
-Only **owned sandbox VMs**, test registries, and lab credentials may be used for builds, tests, deployments, and failure injection. Source code and documentation may be authored on the Ubuntu host. Never access Glynac production servers or secrets.
+## Start here — linked documentation
 
-## System architecture
+All links below open directly into the matching file within this extracted package. Preserve the folder structure when copying documentation into the Git repository.
 
-```text
-Ubuntu development host (editing only)
-                 |
-                 v
-       GitHub repository
-                 |
-       GitHub Actions (planned)
-          |           |
-          v           v
-  Tests + build    Lab image registry
-                      |
-                      v
-            Ubuntu sandbox VM
-       Nomad + Docker + Consul
-                      |
-               Canary update
-                /         \
-        Healthy            Unhealthy
-           |                   |
-     Auto-promote       Deployment fails
-                               |
-                        Nomad auto-revert
-                               |
-                     CI reports failure
-```
+| Document | Use it for |
+| --- | --- |
+| **[Final project report](docs/PROJECT_REPORT.md)** | Executive summary, objective, design, implementation, verified results, limitations, conclusion |
+| **[Word version of final report](reports/Nomad_Automatic_Rollback_Final_Report.docx)** | Editable formal report, ready for institutional formatting and submission |
+| [Project completion summary](docs/PROJECT_COMPLETION_SUMMARY.md) | One-page verified work and outcomes for submission |
+| [Architecture and technical design](docs/architecture.md) | Component responsibilities, flows, Nomad policy, network and data boundaries |
+| [Installation and reproducibility](docs/INSTALLATION_AND_REPRODUCIBILITY.md) | Prerequisites, initial setup, verification and known reproducibility gaps |
+| [Phase 2 application/container validation](docs/phase2-validation.md) | Flask tests, Docker health behavior and evidence provenance |
+| [Phase 4 VM/CI-CD deployment guide](docs/PHASE4_VM_GUIDE.md) | GHCR, GitHub Actions, Tailscale, SSH, release and configuration procedure |
+| [Phase 5 rollback test report](docs/PHASE5_ROLLBACK_TEST_REPORT.md) | Healthy and unhealthy canaries, manual revert, timing, CI failure test |
+| [Consolidated validation and acceptance matrix](docs/VALIDATION.md) | Pass/fail results and explicit unverified acceptance conditions |
+| [Operational runbook](docs/OPERATIONAL_RUNBOOK.md) | Safe deployment, verification, triage and manual recovery commands |
+| [Security, risks and limitations](docs/SECURITY_AND_RISKS.md) | Isolation boundaries, credentials, threat and risk assessment |
+| [Deployment review checklist](docs/DEPLOYMENT_REVIEW_CHECKLIST.md) | Pre-deployment, promotion, revert and post-release checks |
+| [Screenshot and log evidence index](docs/EVIDENCE_INDEX.md) | Eight evidence images, saved log inventory, correct interpretation |
+| [Final handover checklist](docs/FINAL_HANDOVER_CHECKLIST.md) | Deliverables, outstanding checks and transfer steps |
+| [Documentation audit and proofreading](docs/DOCUMENTATION_AUDIT.md) | Corrected outdated claims, verified file links and report formatting |
+| [Milestone / changes record](docs/CHANGELOG.md) | Brief verified timeline of project phases |
+| [Screenshot folder guide](screenshots/README.md) | Direct image links and ready-to-use figure captions |
 
-The diagram illustrates the **target** architecture; it does not mean Nomad rollback has already been implemented. See [Architecture & boundaries](docs/architecture.md).
+## Verified system at a glance
+
+| Area | Verified outcome |
+| --- | --- |
+| Application | Flask/Gunicorn service, `/health` and `/version`; health behavior controlled for lab testing |
+| Tests | **9/9 Python unit tests** passed in a terminal session on the VM `mariana` |
+| Containerization | Docker image built/published and immutable GHCR digest deployed |
+| Orchestration | Nomad service job `rollback-demo`, one running allocation after final recovery |
+| Health | Consul HTTP check; final independent verification returned `version=v2`, `health=healthy` |
+| CI/CD | Successful full pipeline: GitHub Actions run **43426413120** |
+| Failure propagation | Deliberately unhealthy CI deployment failed: run **43442086173**, deployment step exit `1` |
+| Automatic rollback | Failed CI canary reverted to stable Nomad job version **6**; recovery version **8** succeeded |
+| Manual rollback | `nomad job revert rollback-demo 4` returned `0`; recovery execution took **12 seconds** |
+| Final job status | Nomad job version **8** stable; last observed deployment `f2b389f5` successful |
+
+**Observed timing:** First unhealthy v3 command completed in **252 seconds including failure detection and recovery**. In the CI-triggered exercise, the recorded interval from failure/rollback log to successful recovery was approximately **12 seconds**. These are **not measurements of customer-facing outage duration**, and they are not equivalent test intervals.
+
+## Workflow summary
+
+1. Review/merge code to `main`; CI runs the Python tests.
+2. On `main` runs, publish an image with a commit-specific tag and immutable SHA256 digest to GHCR.
+3. If `LAB_CD_ENABLED=true`, connect the GitHub-hosted runner to the isolated VM over tagged Tailscale access and pinned-host-key SSH.
+4. On the VM, validate the commit and image digest, evaluate the Nomad plan, and submit an update with a compare-and-swap job index.
+5. Nomad starts a canary. Consul and application `/health` checks determine whether it qualifies for promotion.
+6. A failed canary triggers configured automatic reversion to the last stable job; CI preserves the failed rollout result even after recovery.
+7. Operators can also run an explicit manual revert for incident recovery.
+
+See the [architecture](docs/architecture.md), [release guide](docs/PHASE4_VM_GUIDE.md), and [incident runbook](docs/OPERATIONAL_RUNBOOK.md) for details.
 
 ## Repository layout
 
 ```text
-.
-├── app/
-│   ├── __init__.py
-│   ├── app.py
-│   └── requirements.txt
-├── tests/
-│   └── test_health.py
-├── docs/
-│   ├── architecture.md
-│   └── phase2-validation.md
-├── Dockerfile
-├── .dockerignore
-├── .gitignore
-└── README.md
+app/                         Flask service
+  app.py                     HTTP endpoints and health behavior
+  requirements.txt           Application dependencies
+tests/test_health.py         Nine application unit tests
+Dockerfile                   Gunicorn container image
+nomad/rollback-demo.nomad.hcl Nomad job with canary/health/revert policy
+.github/workflows/ci-cd.yml CI tests, GHCR publishing and VM deployment
+scripts/                     Preflight, monitored deployment, verification
+README.md                    Documentation entrypoint
+docs/                        Technical and operational documents
+reports/                     Editable final report
+screenshots/                 Redacted/selected evidence captures
 ```
 
-`nomad/`, `.github/workflows/`, setup automation, rollout scripts, operational runbook, and production-review checklist will be added and tested in later implementation stages. **There is not yet a verified one-command lab bootstrap**.
+The deliverable ZIP contains the **documentation, Word report and evidence images**, not a replacement copy of the application's source code. Copy only the documentation files you intend to merge into the existing Git repository; do not overwrite `app/`, `nomad/`, `.github/`, or `scripts/` with documentation artifacts.
 
-## Application contract
+## Quick verification on the existing VM
 
-The Flask service is served by Gunicorn on container port `8080`.
-
-| Method and path | Behavior |
-| --- | --- |
-| `GET /` | JSON service information and current application version, HTTP 200 |
-| `GET /health` | JSON health result, HTTP 200 in healthy mode or HTTP 503 in intentionally unhealthy mode |
-| `GET /version` | JSON version string, HTTP 200 |
-
-| Environment variable | Default | Purpose |
-| --- | --- | --- |
-| `APP_VERSION` | `v1` | Identifies the version being served; setting this alone does not rebuild the image |
-| `HEALTH_MODE` | `healthy` | Setting to `unhealthy` (case-insensitive) makes `/health` return HTTP 503 |
-
-Expected healthy response: `{"status":"healthy","version":"v1"}` (HTTP 200).
-
-Expected unhealthy response: `{"status":"unhealthy","version":"v2"}` (HTTP 503).
-
-**Note:** The controlled failure is introduced through configuration; this allows unit tests to pass while the later rollout fails its live health checks. The example version value is demonstration metadata, not an immutable image identity.
-
-## Lab prerequisites
-
-Inside the **sandbox VM**: a functional Docker Engine, Python 3 with `venv` support, network access for dependency and base-image downloads, and sufficient disk/memory for a build plus two running containers. Nomad and Consul will be needed for subsequent deployment stages. Source code must first be copied or cloned into the sandbox VM.
-
-Do not run official build, automated testing, or intentional failure injection on the physical Ubuntu host.
-
-## Local validation inside the sandbox VM
-
-From the repository root, run:
+Run inside **`mariana`**, not on a physical host or production server:
 
 ```bash
-python3 -m venv .venv
-. .venv/bin/activate
-python -m pip install -r app/requirements.txt
-python -m unittest discover -s tests -p 'test_*.py' -v
+cd ~/nomad-auto-rollback-lab
+systemctl is-active docker consul nomad
+python3 -m unittest discover -s tests -v
+nomad job status rollback-demo
+nomad job history rollback-demo
+bash scripts/phase4-verify.sh
+gh variable list
 ```
 
-The supplied test suite contains nine cases. Check that all tests pass, rather than assuming success from this README.
+Expected for the documented final state: Nomad running, passing Consul service, application `v2` healthy, and `LAB_CD_ENABLED=false`. Values may change after subsequent releases; record fresh evidence instead of assuming historical IDs remain current. The verification script **without** an expected SHA is appropriate for the `v2` demo; its optional argument is restricted to a 12-character hexadecimal commit ID.
 
-Build the image:
+## Safety and evidence handling
 
-```bash
-docker build --pull -t nomad-rollback-demo:local .
-docker image inspect nomad-rollback-demo:local --format 'Image user: {{.Config.User}}'
-docker image inspect nomad-rollback-demo:local --format 'Command: {{json .Config.Cmd}}'
-```
-
-The intended user is `appuser` (UID 10001). The Gunicorn command should include `--no-control-socket` after the reported correction.
-
-Start the controlled healthy and unhealthy instances (use only if these container names are not already in use):
-
-```bash
-docker run -d --name rollback-demo-healthy \
-  -p 127.0.0.1:18081:8080 \
-  -e APP_VERSION=v1 -e HEALTH_MODE=healthy \
-  nomad-rollback-demo:local
-
-docker run -d --name rollback-demo-broken \
-  -p 127.0.0.1:18082:8080 \
-  -e APP_VERSION=v2 -e HEALTH_MODE=unhealthy \
-  nomad-rollback-demo:local
-```
-
-Verify the HTTP responses:
-
-```bash
-curl -i http://127.0.0.1:18081/health
-curl -i http://127.0.0.1:18082/health
-curl -s http://127.0.0.1:18081/version
-```
-
-Expected HTTP statuses are `200` and `503` respectively. Docker health probes are asynchronous. Verify once probes have completed:
-
-```bash
-docker ps --filter 'name=rollback-demo-'
-docker inspect rollback-demo-healthy --format '{{.State.Health.Status}}'
-docker inspect rollback-demo-broken --format '{{.State.Health.Status}}'
-docker exec rollback-demo-healthy id
-docker logs --tail 50 rollback-demo-healthy
-docker logs --tail 50 rollback-demo-broken
-```
-
-Expect `healthy` for v1 and `unhealthy` for v2. In the broken container, a health probe returning HTTP 503 is **intentional**, not a Docker build defect. However, a Gunicorn `Permission denied: '/home/appuser'` control-socket error must not recur after the fix.
-
-Clean up only these demo containers:
-
-```bash
-docker rm -f rollback-demo-healthy rollback-demo-broken
-```
-
-If the container names already exist, inspect and carefully clean up only the previous instances that belong to this lab; do not remove unrelated containers.
-
-## Tests and evidence
-
-See [Phase 2 validation record](docs/phase2-validation.md) for previously observed output, an explicit list of unresolved checks, and instructions to capture accepted sandbox evidence. The previous user-provided output demonstrates all nine unit tests passing, HTTP 200/503 responses, Docker `healthy`/`unhealthy`, and a non-root UID. It does **not** prove the tests occurred in an isolated sandbox VM or that the post-fix image was rebuilt and retested.
-
-## Security boundaries
-
-- No production infrastructure, credentials, or secrets.
-- Do not publish the lab's Nomad or Consul management APIs directly to the internet.
-- For future CI, use a lab-scoped runner and minimal permissions; restrict access to trusted workflows and repositories.
-- Never store tokens or private environment files in Git.
-- Use immutable image references in future deployment steps, not mutable `latest` tags.
-- Docker container health does not by itself trigger a Nomad rollback. Nomad must assess allocation health via its configured service checks and `update` strategy.
-
-## Planned acceptance criteria (not yet achieved)
-
-- [ ] Push to `main` triggers tests, image build, and lab-registry push.
-- [ ] Nomad deploys a canary while preserving the stable allocation.
-- [ ] Consul health checks determine canary deployment health.
-- [ ] Healthy canary auto-promotes.
-- [ ] Broken canary causes a failed deployment and automatic revert.
-- [ ] CI marks the original failed rollout as failed.
-- [ ] Automatic and manual rollback are both demonstrated and timed.
-- [ ] A one-command lab bootstrap is available and verified on a clean VM.
-- [ ] An engineer-facing incident runbook and job review checklist are complete.
-- [ ] Pull request contains evidence and can be independently reproduced.
-
-## References
-
-- [Nomad update block](https://developer.hashicorp.com/nomad/docs/job-specification/update)
-- [Nomad canary deployment strategy](https://developer.hashicorp.com/nomad/docs/job-declare/strategy/blue-green-canary)
-- [Dockerfile HEALTHCHECK reference](https://docs.docker.com/reference/dockerfile/)
-- [GitHub Actions self-hosted runner security](https://docs.github.com/en/actions/reference/security/secure-use)
-- [Flask testing guidance](https://flask.palletsprojects.com/en/stable/testing/)
-- [Gunicorn settings](https://docs.gunicorn.org/en/stable/settings.html)
+- Never commit SSH private keys, OAuth secrets, Tailscale auth keys, `.env` files, or private `authfile` content.
+- Do not publish Nomad (`4646`) or Consul (`8500`) APIs to public networks. Their lab API endpoints were bound to loopback.
+- The test switch `failure_test=true` intentionally creates an unhealthy canary; enable only for an authorized, isolated demonstration, and disable `LAB_CD_ENABLED` afterward.
+- Version, job IDs, deployment IDs, timestamps, and screenshots here are **historical evidence dated 13 November 2026**.
+- For remaining gaps, see [validation](docs/VALIDATION.md), [risks](docs/SECURITY_AND_RISKS.md), and [handover](docs/FINAL_HANDOVER_CHECKLIST.md).
