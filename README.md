@@ -100,35 +100,35 @@ The deliverable ZIP contains the **documentation, Markdown report and evidence i
 ##  screenshot evidence
 
 The following eight visual records supplement the test-result tables and log summary.
-![Infrastructure services and Nomad client](../screenshots/01-Infrastructure-Services-and-Nomad-Client.png)
+![Infrastructure services and Nomad client](../01-Infrastructure-Services-and-Nomad-Client.png)
 
 *Figure 01 — Docker, Nomad and Consul service readiness, plus Nomad client state.*
 
-![Flask application unit tests](../screenshots/02-Flask-Application-Unit-Tests.png)
+![Flask application unit tests](../02-Flask-Application-Unit-Tests.png)
 
 *Figure 02 — Nine passing Python application unit tests in the Ubuntu VM.*
 
-![Successful GitHub Actions CI/CD](../screenshots/03-Successful-GitHub-Actions-CI-CD.png)
+![Successful GitHub Actions CI/CD](../03-Successful-GitHub-Actions-CI-CD.png)
 
 *Figure 03 — Verified healthy release with passing tests, image publish and VM deployment.*
 
-![Nomad job overview](../screenshots/04-Nomad-Job-Deployment-Overview.png)
+![Nomad job overview](../04-Nomad-Job-Deployment-Overview.png)
 
 *Figure 04 — Post-recovery Nomad job overview: stable version 8 and healthy allocation.*
 
-![Manual rollback recovery output](../screenshots/05-Manual-Rollback-Recovery-Output.png)
+![Manual rollback recovery output](../05-Manual-Rollback-Recovery-Output.png)
 
 *Figure 05 — Manual recovery event reaches a successful job version; original command in the saved log.*
 
-![Expected GitHub Actions deployment failure](../screenshots/06-Expected-GitHub-Actions-Deployment-Failure.png)
+![Expected GitHub Actions deployment failure](../06-Expected-GitHub-Actions-Deployment-Failure.png)
 
 *Figure 06 — Controlled unhealthy candidate: test/build jobs passed and deployment failed.*
 
-![CI-triggered automatic rollback log](../screenshots/07-CI-Triggered-Automatic-Rollback-Log.png)
+![CI-triggered automatic rollback log](../07-CI-Triggered-Automatic-Rollback-Log.png)
 
 *Figure 07 — Deadline failure, revert to stable configuration and CI exit code 1.*
 
-![Final Nomad service dashboard](../screenshots/08-Final-Nomad-Service-Health.png)
+![Final Nomad service dashboard](../08-Final-Nomad-Service-Health.png)
 
 *Figure 08 — Final successful Nomad deployment dashboard; independent HTTP v2 health is recorded separately.*
 
