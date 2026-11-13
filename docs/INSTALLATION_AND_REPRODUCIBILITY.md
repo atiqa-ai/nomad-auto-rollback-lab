@@ -6,8 +6,7 @@
 
 | Item | Recorded details |
 | --- | --- |
-| VM | `mariana`, Ubuntu 24.04 guest under KVM/virt-manager |
-| VM login | `manoo` |
+| VM |  Ubuntu 24.04 guest under KVM/virt-manager |
 | Services | Docker `29.9.3`, Nomad `2.1.1`, Consul `2.1.0` (recorded environment) |
 | Nomad | Single server/client lab, datacenter `dc1`, node `5917225a` ready |
 | Job | `rollback-demo` / `web` |
