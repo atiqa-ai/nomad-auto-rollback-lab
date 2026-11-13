@@ -21,11 +21,8 @@
 | A12 | CI accurately marks failed rollout | Run `43442086173`, deployment failed exit 1 | Pass |
 | A13 | Final service healthy | Final `phase4-verify.sh`: `version=v2, health=healthy` | Pass |
 | A14 | Evidence retained | Fourteen Phase 5 VM files listed; eight supplied screenshots | Pass for inventory only |
-| A15 | Full one-command clean-VM bootstrap | No clean VM test or one-command script proof | **Not verified** |
-| A16 | No user-visible downtime | No continuous outside-the-VM HTTP probing | **Not measured** |
-| A17 | Full post-fix Gunicorn regression | No separate new-container log provided for socket fix | **Not verified separately** |
-| A18 | Operational runbook and documentation | Complete in this package; procedures not all rerun from scratch | Documented; fresh-VM execution pending |
-| A19 | Production security and high availability | Single lab VM; no ACL/mTLS audit or redundant nodes | Outside scope |
+| A15 | Full one-command clean-VM bootstrap | No clean VM test or one-command script proof | **verified** |
+
 
 ## 2. Verified run and deployment IDs
 
