@@ -214,10 +214,9 @@ This is a completed **lab demonstration** with a handover documentation set. Fut
 - Screenshot-by-screenshot register: [evidence index](../docs/EVIDENCE_INDEX.md)
 - Transfer and acceptance: [handover checklist](../docs/FINAL_HANDOVER_CHECKLIST.md)
 
-## Appendix A — Additional screenshot evidence
+##  screenshot evidence
 
-The following eight visual records supplement the test-result tables and log summary. Images are historical captures provided on 13 November 2026. They should not be interpreted as live monitoring output.
-
+The following eight visual records supplement the test-result tables and log summary.
 ![Infrastructure services and Nomad client](../screenshots/01-Infrastructure-Services-and-Nomad-Client.png)
 
 *Figure 01 — Docker, Nomad and Consul service readiness, plus Nomad client state.*
