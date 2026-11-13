@@ -32,4 +32,4 @@ Disable LAB_CD_ENABLED after completing the test.
 
 ## Status
 
-Pending live push-triggered deployment verification.
+Verified successfully on 13 November 2026. GitHub Actions run `43481759119` was triggered by a push to `main`. Python tests, Docker publishing and Nomad deployment passed. Commit `ea3ff5145bc7` deployed as Nomad job version `9`, deployment `ef6bf59a`, with automatic canary promotion and passing health checks.

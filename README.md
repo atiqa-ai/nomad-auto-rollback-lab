@@ -145,7 +145,7 @@ bash scripts/phase4-verify.sh
 gh variable list
 ```
 
-Expected for the documented final state: Nomad running, passing Consul service, application `v2` healthy, and `LAB_CD_ENABLED=false`. Values may change after subsequent releases; record fresh evidence instead of assuming historical IDs remain current. The verification script **without** an expected SHA is appropriate for the `v2` demo; its optional argument is restricted to a 12-character hexadecimal commit ID.
+Phase 5 evidence records the stable `v2` application. The later Phase 6 push-triggered release deployed commit `ea3ff5145bc7` as Nomad job version `9`, with deployment `ef6bf59a` successful, automatic canary promotion, passing health verification, and `LAB_CD_ENABLED=false` restored. Values may change after subsequent releases; record fresh evidence instead of assuming historical IDs remain current. The verification script **without** an expected SHA is appropriate for the `v2` demo; its optional argument is restricted to a 12-character hexadecimal commit ID.
 
 ## Safety and evidence handling
 
@@ -154,3 +154,8 @@ Expected for the documented final state: Nomad running, passing Consul service, 
 - The test switch `failure_test=true` intentionally creates an unhealthy canary; enable only for an authorized, isolated demonstration, and disable `LAB_CD_ENABLED` afterward.
 - Version, job IDs, deployment IDs, timestamps, and screenshots here are **historical evidence dated 13 November 2026**.
 - For remaining gaps, see [validation](docs/VALIDATION.md), and [handover](docs/FINAL_HANDOVER_CHECKLIST.md).
+
+
+## Nomad Deployment Review Checklist
+
+Engineers can use the [Nomad deployment review checklist](docs/DEPLOYMENT_REVIEW_CHECKLIST.md) to review canary settings, health checks, automatic revert, deployment safety, recovery procedures and approvals.

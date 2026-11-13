@@ -144,7 +144,7 @@ On GitHub Actions run **43442086173**, the Python test job passed in **9 seconds
 | Manual revert | Revert to version 4, exit 0, recovery success | Pass |
 | CI failure propagation | Deliberate workflow run failed after successful recovery | Pass |
 | Final health | `version=v2, health=healthy`, stable job version 8 | Pass |
-| Clean VM one-command bootstrap | No independent fresh-VM run recorded | **Not verified** |
+| Clean VM one-command bootstrap | Separate fresh-VM setup reported successful by the user; bootstrap log not independently reviewed | **Evidence pending** |
 | Zero-downtime SLO | No continuous external availability measurements | **Not measured** |
 
 ## 8. Recovery metrics: interpretation and limits
@@ -226,3 +226,24 @@ The following eight visual records supplement the test-result tables and log sum
 ![Final Nomad service dashboard](../screenshots/08-Final-Nomad-Service-Health.png){width=6.15in}
 
 *Figure 08 — Final successful Nomad deployment dashboard; independent HTTP v2 health is recorded separately.*
+
+## Phase 6 — Final Push-Triggered Deployment Verification
+
+On 13 November 2026, GitHub Actions run `43481759119`
+was triggered by a push to `main`.
+
+- Python unit tests: passed
+- Docker build and GHCR publishing: passed
+- Tailscale and SSH connectivity: passed
+- Nomad deployment: successful
+- Deployed commit: `ea3ff5145bc7`
+- Nomad job version: `9`
+- Deployment ID: `ef6bf59a`
+- Canary promotion: successful
+- Healthy allocations: `1`
+- Unhealthy allocations: `0`
+- Application verification: `health=healthy`
+- Deployment gate: restored to `LAB_CD_ENABLED=false`
+
+Earlier `v2` and job version `8` results remain valid
+historical evidence of Phase 5 rollback testing.
