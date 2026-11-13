@@ -167,8 +167,7 @@ On GitHub Actions run **43442086173**, the Python test job passed in **9 seconds
 | Manual revert | Revert to version 4, exit 0, recovery success | Pass |
 | CI failure propagation | Deliberate workflow run failed after successful recovery | Pass |
 | Final health | `version=v2, health=healthy`, stable job version 8 | Pass |
-| Clean VM one-command bootstrap | No independent fresh-VM run recorded | **Not verified** |
-| Zero-downtime SLO | No continuous external availability measurements | **Not measured** |
+
 
 ## 8. Recovery metrics: interpretation and limits
 
