@@ -32,8 +32,8 @@ All links below open directly into the matching file within this extracted packa
 
 | Document | Use it for |
 | --- | --- |
-| **[Final project report](docs/PROJECT_REPORT.md)** | Executive summary, objective, design, implementation, verified results, limitations, conclusion |
-| **[Final report — embedded images (.md)](reports/Nomad_Automatic_Rollback_Final_Report.md)** | Same formal report with all eight evidence screenshots embedded directly into the Markdown file |
+| **[Final project report](docs/PROJECT_REPORT.md)** | Executive summary, objective, design, implementation, verified results, screenshots, conclusion |
+
 | [Final report — offline browser preview (.html)](reports/Nomad_Automatic_Rollback_Final_Report_Offline.html) | Self-contained view with all evidence images visible in a browser |
 | [Final report — GitHub-compatible (.md)](reports/Nomad_Automatic_Rollback_Final_Report_GitHub.md) | Same wording with relative PNG links, suited to viewing inside the extracted project folder or GitHub repo |
 | [Project completion summary](docs/PROJECT_COMPLETION_SUMMARY.md) | One-page verified work and outcomes for submission |
