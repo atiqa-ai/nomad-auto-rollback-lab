@@ -12,8 +12,10 @@ All links below open directly into the matching file within this extracted packa
 
 | Document | Use it for |
 | --- | --- |
-| **[Final project report](Nomad_Automatic_Rollback_Final_Report.md)** | Executive summary, objective, design, implementation, verified results, limitations, conclusion |
-| **[Word version of final report](reports/Nomad_Automatic_Rollback_Final_Report.docx)** | Editable formal report, ready for institutional formatting and submission |
+| **[Final project report](docs/PROJECT_REPORT.md)** | Executive summary, objective, design, implementation, verified results, limitations, conclusion |
+| **[Final report — embedded images (.md)](reports/Nomad_Automatic_Rollback_Final_Report.md)** | Same formal report with all eight evidence screenshots embedded directly into the Markdown file |
+| [Final report — offline browser preview (.html)](reports/Nomad_Automatic_Rollback_Final_Report_Offline.html) | Self-contained view with all evidence images visible in a browser |
+| [Final report — GitHub-compatible (.md)](reports/Nomad_Automatic_Rollback_Final_Report_GitHub.md) | Same wording with relative PNG links, suited to viewing inside the extracted project folder or GitHub repo |
 | [Project completion summary](docs/PROJECT_COMPLETION_SUMMARY.md) | One-page verified work and outcomes for submission |
 | [Architecture and technical design](docs/architecture.md) | Component responsibilities, flows, Nomad policy, network and data boundaries |
 | [Installation and reproducibility](docs/INSTALLATION_AND_REPRODUCIBILITY.md) | Prerequisites, initial setup, verification and known reproducibility gaps |
@@ -29,6 +31,8 @@ All links below open directly into the matching file within this extracted packa
 | [Documentation audit and proofreading](docs/DOCUMENTATION_AUDIT.md) | Corrected outdated claims, verified file links and report formatting |
 | [Milestone / changes record](docs/CHANGELOG.md) | Brief verified timeline of project phases |
 | [Screenshot folder guide](screenshots/README.md) | Direct image links and ready-to-use figure captions |
+
+**Viewing evidence images:** The standalone Markdown report embeds its eight PNGs directly, but some Markdown viewers block embedded images for security. If pictures are not visible in your viewer, open the **offline HTML preview** in a browser. For GitHub, use the **GitHub-compatible Markdown report** with the `screenshots/` directory kept alongside it in the extracted folder hierarchy.
 
 ## Verified system at a glance
 
@@ -72,11 +76,11 @@ nomad/rollback-demo.nomad.hcl Nomad job with canary/health/revert policy
 scripts/                     Preflight, monitored deployment, verification
 README.md                    Documentation entrypoint
 docs/                        Technical and operational documents
-reports/                     Editable final report
+reports/                     Final Markdown report
 screenshots/                 Redacted/selected evidence captures
 ```
 
-The deliverable ZIP contains the **documentation, Word report and evidence images**, not a replacement copy of the application's source code. Copy only the documentation files you intend to merge into the existing Git repository; do not overwrite `app/`, `nomad/`, `.github/`, or `scripts/` with documentation artifacts.
+The deliverable ZIP contains the **documentation, Markdown report and evidence images**, not a replacement copy of the application's source code. Copy only the documentation files you intend to merge into the existing Git repository; do not overwrite `app/`, `nomad/`, `.github/`, or `scripts/` with documentation artifacts.
 
 ## Quick verification on the existing VM
 
